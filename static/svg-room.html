@@ -20,51 +20,98 @@ SVGRoom.prototype.init = function() {
   this.y = Math.random() * 400;
   this.color = randomRGB();
 
-  this.body = this.svg.addCircle({cx:this.x, cy:this.y, r:20, style:{fill:this.color, stroke:"black", strokeWidth:5}});
-
-  return {
+  let initData = {
     x: this.x,
     y: this.y,
     color: this.color
   }
+
+  return initData;
 }
 SVGRoom.prototype.onConnect = function(socket) {
+  this.socket = socket;
   this.id = socket.id;
 }
-SVGRoom.prototype.initFriends = function(data) {
-  // Delete inactive friends
+
+SVGRoom.prototype.transmit = function(event, data) {
+  if (!this.socket) {
+    console.error('Socket not connected');
+    return;
+  }
+  // Send the message
+  this.socket.emit(event, data);
+}
+
+SVGRoom.prototype.receive = function(event, data) {
+  if (event == "move") {
+    this.setBody(data.id, data);
+  }
+}
+
+SVGRoom.prototype.setBody = function(id, data) {
+  if (!data) return;
+  // Add/move user avatar
+  if (id == this.id) {
+    // This is me!
+    if (this.body) {
+      this.body.translate(data.x, data.y);
+    } else {
+      this.body = this.svg.addCircle({cx:0, cy:0, r:20, style:{fill:data.color, stroke:"black", strokeWidth:5, cursor:"move"}});
+      console.log("Body data:", data);
+      this.body.translate(data.x, data.y);
+
+      var dragEnd;
+      var updateInterval;
+      var lastUpdate = {x:this.x, y:this.y};
+      this.svg.draggable(this.body, (state, body, dragInfo) => {
+        if (state == "start") {
+          dragEnd = false;
+          updateInterval = window.setInterval(() => {
+            if (dragEnd) window.clearInterval(updateInterval);
+            if (this.x == lastUpdate.x && this.y == lastUpdate.y) return;
+            lastUpdate = {x:this.x, y:this.y};
+            this.transmit("move", {
+              id: this.id,
+              x: this.x,
+              y: this.y
+            });
+          }, 200);
+        }
+        this.x = dragInfo.xObject;
+        this.y = dragInfo.yObject;
+        if (state == "end") dragEnd = true;
+      });
+    }
+    return;
+  }
+  if (id in this.friends) {
+    // A previously registered friend
+    let friend = this.friends[id];
+    friend.data = data;
+    friend.body.translate(data.x, data.y);
+  } else {
+    // A new friend
+    let friend = {
+      data: data
+    }
+    friend.body = this.svg.addCircle({cx:0, cy:0, r:20, style:{fill:data.color, stroke:"white"}});
+    friend.body.translate(data.x, data.y);
+    this.friends[id] = friend;
+  }
+}
+SVGRoom.prototype.initBodies = function(data) {
+  if (!data.data) return;
+  // Delete inactive bodies
   for (var friendId in this.friends) {
     if (!(friendId in data.data)) {
-      this.friends[friendId].remove();
+      this.friends[friendId].body.remove();
       delete this.friends[friendId];
     }
   }
-  // Register/move active friends
-  if (data.data) {
-    for (var friendId in data.data) {
-      var friendData = data.data[friendId];
-      if (friendId in this.friends) {
-        // Registered friend
-        let friend = this.friends[friendId];
-        friend.data = friendData;
-        friend.body.setAttributes({cx:friend.data.x, cy:friend.data.y});
-      } else {
-        // New friend
-        let friend = {
-          data: friendData
-        }
-        friend.body = this.svg.addCircle({cx:friend.data.x, cy:friend.data.y, r:20, style:{fill:friend.data.color, stroke:"white"}});
-        this.friends[friendId] = friend;
-      }
-    }
+  // Add/move active bodies
+  for (var friendId in data.data) {
+    this.setBody(friendId, data.data[friendId]);
   }
-}
-SVGRoom.prototype.newFriend = function(data) {
-  var friend = {
-    data: data.data
-  }
-  friend.body = this.svg.addCircle({cx:friend.data.x, cy:friend.data.y, r:20, style:{fill:friend.data.color, stroke:"white"}});
-  this.friends[data.id] = friend;
 }
 
 var state = new SVGRoom();
@@ -92,7 +139,7 @@ function connectSocket() {
   }
   // Init the socket
   state.data = state.init();
-  socket = io(socketAddress, {query:state.data});
+  socket = io(socketAddress, {query:{initData: JSON.stringify(state.data)}});
   socket.on('connect', function() {
     console.log('Socket established, id =', socket.id);
     state.onConnect(socket);
@@ -107,7 +154,7 @@ function connectSocket() {
       socketOption.text = id;
       socketList.add(socketOption);
     });
-    state.initFriends(data);
+    state.initBodies(data);
   });
   socket.on('new-connection', function(data) {
     console.log('New connection:', data);
@@ -115,10 +162,14 @@ function connectSocket() {
     var socketOption = document.createElement("option");
     socketOption.text = data.id;
     socketList.add(socketOption);
-    state.newFriend(data);
+    state.setBody(data.id, data.data);
   });
   socket.on('msg', function(data) {
     console.log('Incoming msg:', data);
+  });
+  socket.on('move', function(data) {
+    console.log('Incoming move msg:', data);
+    state.receive("move", data);
   });
 }
 function sendMsg() {
