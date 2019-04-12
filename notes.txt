@@ -1,0 +1,16 @@
+$ npm init
+$ npm install express --save
+$ npm install socket.io --save
+
+$ mkdir ~/.npm-global
+$ npm config set prefix '~/.npm-global'
+$ nano ~/.profile ---- export PATH=~/.npm-global/bin:$PATH
+$ source ~/.profile
+$ npm install -g nodemon
+
+$ touch index.js
+$ mkdir static
+$ touch static/index.html
+
+Useful reference:
+https://stackoverflow.com/questions/10058226/send-response-to-all-clients-except-sender

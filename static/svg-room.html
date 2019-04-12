@@ -1,0 +1,156 @@
+<html>
+<head>
+<link rel="stylesheet" href="css/styles.css">
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/SVGBuilder.js"></script>
+<script>
+
+function SVGRoom() {
+  this.svg = null;
+  this.id;
+  this.friends = {};
+}
+SVGRoom.prototype.init = function() {
+  if (!this.svg) {
+    console.error("SVG canvas not initialized!");
+    return;
+  }
+
+  this.x = Math.random() * 700;
+  this.y = Math.random() * 400;
+  this.color = randomRGB();
+
+  this.body = this.svg.addCircle({cx:this.x, cy:this.y, r:20, style:{fill:this.color, stroke:"black", strokeWidth:5}});
+
+  return {
+    x: this.x,
+    y: this.y,
+    color: this.color
+  }
+}
+SVGRoom.prototype.onConnect = function(socket) {
+  this.id = socket.id;
+}
+SVGRoom.prototype.initFriends = function(data) {
+  // Delete inactive friends
+  for (var friendId in this.friends) {
+    if (!(friendId in data.data)) {
+      this.friends[friendId].remove();
+      delete this.friends[friendId];
+    }
+  }
+  // Register/move active friends
+  if (data.data) {
+    for (var friendId in data.data) {
+      var friendData = data.data[friendId];
+      if (friendId in this.friends) {
+        // Registered friend
+        let friend = this.friends[friendId];
+        friend.data = friendData;
+        friend.body.setAttributes({cx:friend.data.x, cy:friend.data.y});
+      } else {
+        // New friend
+        let friend = {
+          data: friendData
+        }
+        friend.body = this.svg.addCircle({cx:friend.data.x, cy:friend.data.y, r:20, style:{fill:friend.data.color, stroke:"white"}});
+        this.friends[friendId] = friend;
+      }
+    }
+  }
+}
+SVGRoom.prototype.newFriend = function(data) {
+  var friend = {
+    data: data.data
+  }
+  friend.body = this.svg.addCircle({cx:friend.data.x, cy:friend.data.y, r:20, style:{fill:friend.data.color, stroke:"white"}});
+  this.friends[data.id] = friend;
+}
+
+var state = new SVGRoom();
+
+window.onload = function() {
+  var svg = new SVGBuilder();
+  svg.insert(document.getElementById("svg-container"), true);
+  state.svg = svg;
+}
+
+function randomRGB() {
+  var r = Math.floor(Math.random() * 0x100);
+  var g = Math.floor(Math.random() * 0x100);
+  var b = Math.floor(Math.random() * 0x100);
+  var randomRGB = "#" + (0x1000000 + (r << 16) + (g << 8) + b).toString(16).substr(1);
+  return randomRGB;
+}
+
+var socket;
+var socketAddress = 'http://localhost:1234';
+function connectSocket() {
+  if (socket) {
+    console.error('Socket already connected');
+    return;
+  }
+  // Init the socket
+  state.data = state.init();
+  socket = io(socketAddress, {query:state.data});
+  socket.on('connect', function() {
+    console.log('Socket established, id =', socket.id);
+    state.onConnect(socket);
+  });
+  // Listen for events
+  socket.on('init', function(data) {
+    console.log('Init:', data);
+    var socketList = document.getElementById('sockets');
+    data.ids.forEach(function(id) {
+      if (socket.id == id) return;
+      var socketOption = document.createElement("option");
+      socketOption.text = id;
+      socketList.add(socketOption);
+    });
+    state.initFriends(data);
+  });
+  socket.on('new-connection', function(data) {
+    console.log('New connection:', data);
+    var socketList = document.getElementById('sockets');
+    var socketOption = document.createElement("option");
+    socketOption.text = data.id;
+    socketList.add(socketOption);
+    state.newFriend(data);
+  });
+  socket.on('msg', function(data) {
+    console.log('Incoming msg:', data);
+  });
+}
+function sendMsg() {
+  if (!socket) {
+    console.error('Socket not connected');
+    return;
+  }
+  // Get the recipient
+  var socketList = document.getElementById('sockets');
+  // Prepare the message
+  var msgTxt = document.getElementById('msg-txt');
+  var data = {
+    recipient:socketList.value,
+    txt: msgTxt.value,
+    xtra: Math.random()
+  }
+  // Send the message
+  socket.emit('msg', data);
+}
+</script>
+<style>
+
+</style>
+</head>
+<body>
+<h1>Websocket test</h1>
+<button onclick="connectSocket()">Connect</button><br>
+<input type="text" id="msg-txt"><button onclick="sendMsg()">Send to</button><select id="sockets"><option>All</option></select><br>
+
+<hr></hr>
+
+<div id="svg-container"></div>
+
+</body>
+</html>
