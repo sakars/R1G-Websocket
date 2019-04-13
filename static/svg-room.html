@@ -5,112 +5,132 @@
 <script src="/js/SVGBuilder.js"></script>
 <script>
 
-function SVGRoom() {
-  this.svg = null;
-  this.id;
-  this.friends = {};
-}
-SVGRoom.prototype.init = function() {
-  if (!this.svg) {
-    console.error("SVG canvas not initialized!");
-    return;
+class SVGRoom {
+
+  constructor() {
+    this.svg = null;
+    this.id;
+    this.friends = {};
   }
 
-  this.x = Math.random() * 700;
-  this.y = Math.random() * 400;
-  this.color = randomRGB();
+  init() {
+    if (!this.svg) {
+      console.error("SVG canvas not initialized!");
+      return;
+    }
 
-  let initData = {
-    x: this.x,
-    y: this.y,
-    color: this.color
-  }
+    this.x = Math.random() * 700;
+    this.y = Math.random() * 400;
+    this.color = randomRGB();
 
-  return initData;
-}
-SVGRoom.prototype.onConnect = function(socket) {
-  this.socket = socket;
-  this.id = socket.id;
-}
+    let initData = {
+      x: this.x,
+      y: this.y,
+      color: this.color
+    }
 
-SVGRoom.prototype.transmit = function(event, data) {
-  if (!this.socket) {
-    console.error('Socket not connected');
-    return;
-  }
-  // Send the message
-  this.socket.emit(event, data);
-}
-
-SVGRoom.prototype.receive = function(event, data) {
-  if (event == "move") {
-    this.setBody(data.id, data);
-  }
-}
-
-SVGRoom.prototype.setBody = function(id, data) {
-  if (!data) return;
-  // Add/move user avatar
-  if (id == this.id) {
-    // This is me!
     if (this.body) {
-      this.body.translate(data.x, data.y);
-    } else {
-      this.body = this.svg.addCircle({cx:0, cy:0, r:20, style:{fill:data.color, stroke:"black", strokeWidth:5, cursor:"move"}});
-      console.log("Body data:", data);
-      this.body.translate(data.x, data.y);
+      this.body.setStyle({'fill': this.color});
+    }
 
-      var dragEnd;
-      var updateInterval;
-      var lastUpdate = {x:this.x, y:this.y};
-      this.svg.draggable(this.body, (state, body, dragInfo) => {
-        if (state == "start") {
-          dragEnd = false;
-          updateInterval = window.setInterval(() => {
-            if (dragEnd) window.clearInterval(updateInterval);
-            if (this.x == lastUpdate.x && this.y == lastUpdate.y) return;
-            lastUpdate = {x:this.x, y:this.y};
-            this.transmit("move", {
-              id: this.id,
-              x: this.x,
-              y: this.y
-            });
-          }, 200);
-        }
-        this.x = dragInfo.xObject;
-        this.y = dragInfo.yObject;
-        if (state == "end") dragEnd = true;
-      });
-    }
-    return;
+    return initData;
   }
-  if (id in this.friends) {
-    // A previously registered friend
-    let friend = this.friends[id];
-    friend.data = data;
-    friend.body.translate(data.x, data.y);
-  } else {
-    // A new friend
-    let friend = {
-      data: data
-    }
-    friend.body = this.svg.addCircle({cx:0, cy:0, r:20, style:{fill:data.color, stroke:"white"}});
-    friend.body.translate(data.x, data.y);
-    this.friends[id] = friend;
+
+  onConnect(socket) {
+    this.socket = socket;
+    this.id = socket.id;
   }
-}
-SVGRoom.prototype.initBodies = function(data) {
-  if (!data.data) return;
-  // Delete inactive bodies
-  for (var friendId in this.friends) {
-    if (!(friendId in data.data)) {
-      this.friends[friendId].body.remove();
+
+  transmit(event, data) {
+    if (!this.socket) {
+      console.error('Socket not connected');
+      return;
+    }
+    // Send the message
+    this.socket.emit(event, data);
+  }
+
+  receive(event, data) {
+    if (event == 'move') {
+      this.setBody(data.id, data);
+    }
+    if (event == 'leave') {
+      this.removeFriend(data.id);
+    }
+  }
+
+  removeFriend(friendId) {
+    var friend = this.friends[friendId];
+    if (friend) {
+      friend.body.remove();
       delete this.friends[friendId];
     }
   }
-  // Add/move active bodies
-  for (var friendId in data.data) {
-    this.setBody(friendId, data.data[friendId]);
+
+  setBody(id, data) {
+    if (!data) return;
+    // Add/move user avatar
+    if (id == this.id) {
+      // This is me!
+      if (this.body) {
+        this.body.translate(data.x, data.y);
+      } else {
+        this.body = this.svg.addCircle({cx:0, cy:0, r:20, style:{fill:data.color, stroke:"black", strokeWidth:5, cursor:"move"}});
+        console.log("Body data:", data);
+        this.body.translate(data.x, data.y);
+
+        var dragEnd;
+        var updateInterval;
+        var lastUpdate = {x:this.x, y:this.y};
+        this.svg.draggable(this.body, (state, body, dragInfo) => {
+          if (state == "start") {
+            dragEnd = false;
+            updateInterval = window.setInterval(() => {
+              if (dragEnd) window.clearInterval(updateInterval);
+              if (this.x == lastUpdate.x && this.y == lastUpdate.y) return;
+              lastUpdate = {x:this.x, y:this.y};
+              this.transmit("move", {
+                id: this.id,
+                x: this.x,
+                y: this.y
+              });
+            }, 200);
+          }
+          this.x = dragInfo.xObject;
+          this.y = dragInfo.yObject;
+          if (state == "end") dragEnd = true;
+        });
+      }
+      return;
+    }
+    if (id in this.friends) {
+      // A previously registered friend
+      let friend = this.friends[id];
+      friend.data = data;
+      friend.body.translate(data.x, data.y);
+    } else {
+      // A new friend
+      let friend = {
+        data: data
+      }
+      friend.body = this.svg.addCircle({cx:0, cy:0, r:20, style:{fill:data.color, stroke:"white"}});
+      friend.body.translate(data.x, data.y);
+      this.friends[id] = friend;
+    }
+  }
+
+  initBodies(data) {
+    if (!data.data) return;
+    // Delete inactive bodies
+    for (var friendId in this.friends) {
+      if (!(friendId in data.data)) {
+        this.removeFriend(friendId);
+      }
+    }
+    // Add/move active bodies
+    for (var friendId in data.data) {
+      this.setBody(friendId, data.data[friendId]);
+    }
   }
 }
 
@@ -132,14 +152,14 @@ function randomRGB() {
 
 var socket;
 var socketAddress = 'http://localhost:1234';
+
 function connectSocket() {
   if (socket) {
     console.error('Socket already connected');
     return;
   }
   // Init the socket
-  state.data = state.init();
-  socket = io(socketAddress, {query:{initData: JSON.stringify(state.data)}});
+  socket = io(socketAddress, {query:{initData: JSON.stringify(state.init())}});
   socket.on('connect', function() {
     console.log('Socket established, id =', socket.id);
     state.onConnect(socket);
@@ -169,9 +189,21 @@ function connectSocket() {
   });
   socket.on('move', function(data) {
     console.log('Incoming move msg:', data);
-    state.receive("move", data);
+    state.receive('move', data);
+  });
+  socket.on('leave', function(data) {
+    console.log('Incoming leave msg:', data);
+    state.receive('leave', data);
   });
 }
+
+function disconnectSocket() {
+  if (socket) {
+    socket.disconnect();
+    socket = null;
+  }
+}
+
 function sendMsg() {
   if (!socket) {
     console.error('Socket not connected');
@@ -190,13 +222,10 @@ function sendMsg() {
   socket.emit('msg', data);
 }
 </script>
-<style>
-
-</style>
 </head>
 <body>
 <h1>Websocket test</h1>
-<button onclick="connectSocket()">Connect</button><br>
+<button onclick="connectSocket()">Connect</button><button onclick="disconnectSocket()">Disconnect</button><br>
 <input type="text" id="msg-txt"><button onclick="sendMsg()">Send to</button><select id="sockets"><option>All</option></select><br>
 
 <hr></hr>
