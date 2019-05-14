@@ -7,12 +7,14 @@
 <body>
 
   <button onclick="connectSocket()">Connect</button>
-  <canvas width="900" height="600" style="background-color:grey">
+  <canvas id="Canvas" width="900" height="600" style="background-color:grey">
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/SVGBuilder.js"></script>
   <script src="sockets.js"></script>
   <script type="text/javascript">
   var pressedK=[];
+  var ctx=Canvas.getContext("2d");
+  var me={x:10,y:10};
   function handleKeyDown(event){//event.key
     if(!pressedK.includes(event.key)){
       pressedK.push(event.key);
@@ -24,6 +26,33 @@
       pressedK.splice(pressedK.indexOf(event.key),1);
       socket.emit("update",JSON.stringify({id:socket.id, keys:pressedK}));
     }
+  }
+  function update(){
+    var send=false;
+    if(pressedK.includes("a")){
+      me.x--;
+      send=true;
+    }
+    if(pressedK.includes("d")){
+      me.x++;
+      send=true;
+    }
+    if(pressedK.includes("w")){
+      me.y--;
+      send=true;
+    }
+    if(pressedK.includes("s")){
+      me.y++;
+      send=true;
+    }
+    if(send){
+      socket.emit("force",JSON.stringify(me));
+    }
+    ctx.clearRect(0,0,Canvas.width,Canvas.height);
+    players.forEach(function(a){
+      ctx.fillRect(a.x-5,a.y-5,10,10);
+    });
+    setTimeout(update,10);
   }
   window.addEventListener('keydown', handleKeyDown, true);
   window.addEventListener('keyup', handleKeyUp, true);

@@ -61,6 +61,10 @@ io.on('connection', function(socket) {
     console.log("Update:",data);
     io.sockets.emit('update', data);
   });
+  socket.on("force",function(data){
+    console.log("Forced location:",data);
+    io.sockets.emit('force', data);
+  });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
     state.clientLeave(socket.id, reason);
