@@ -29,7 +29,7 @@ io.on('connection', function(socket) {
   }
   /*
   for (var socketId in connectionData) {
-    if (!socketIds.includes(socketId)) delete connectionData[socketId]; 
+    if (!socketIds.includes(socketId)) delete connectionData[socketId];
   }
   */
   socket.emit('init', {ids:socketIds, data:state.publicDataFull()});
@@ -57,7 +57,10 @@ io.on('connection', function(socket) {
     state.clientUpdate(socket.id, data);
     socket.broadcast.emit('move', data); // Send to every open socket, excluding the sender
   });
-
+  socket.on("update",function(data){
+    console.log("Update:",data);
+    io.sockets.emit('update', data);
+  });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
     state.clientLeave(socket.id, reason);
