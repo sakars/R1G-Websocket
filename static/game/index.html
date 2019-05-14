@@ -5,62 +5,28 @@
 <title></title>
 </head>
 <body>
+
+  <button onclick="connectSocket()">Connect</button>
+  <canvas width="900" height="600" style="background-color:grey">
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/SVGBuilder.js"></script>
+  <script src="sockets.js"></script>
   <script type="text/javascript">
-  var socket;
-  var socketAddress = window.location.host;
-
-  function connectSocket() {
-    if (socket) {
-      console.error('Socket already connected');
-      return;
-    }
-    // Init the socket
-    socket = io(socketAddress, {query:{initData:JSON.stringify({mes:"hi"})}});
-    socket.on('connect', function() {
-      console.log('Socket established, id =', socket.id);
-    });
-    // Listen for events
-    socket.on('init', function(data) {
-      console.log('Init:', data);
-    });
-    socket.on('new-connection', function(data) {
-      console.log('New connection:', data);
-    });
-    socket.on('update', function(data) {
-      console.log('Incoming move msg:', data);
-    });
-    socket.on('force', function(data) {
-      console.log('Force reset:', data);
-    });
-    socket.on('leave', function(data) {
-      console.log('Incoming leave msg:', data);
-    });
-  }
-
-  function disconnectSocket() {
-    if (socket) {
-      socket.disconnect();
-      socket = null;
-    }
-  }
   var pressedK=[];
   function handleKeyDown(event){//event.key
     if(!pressedK.includes(event.key)){
       pressedK.push(event.key);
-      socket.emit("update",socket.id+":"+pressedK.join(":"));
+      socket.emit("update",JSON.stringify({id:socket.id, keys:pressedK}));
     }
   }
   function handleKeyUp(event){//event.key
     if(pressedK.includes(event.key)){
       pressedK.splice(pressedK.indexOf(event.key),1);
-      socket.emit("update",socket.id+":"+pressedK.join(":"));
+      socket.emit("update",JSON.stringify({id:socket.id, keys:pressedK}));
     }
   }
   window.addEventListener('keydown', handleKeyDown, true);
   window.addEventListener('keyup', handleKeyUp, true);
 </script>
-<button onclick="connectSocket()">Connect</button>
 </body>
 </html>
