@@ -3,7 +3,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 var socket;
-var socketAddress = 'http://localhost:1234';
+var socketAddress = window.location.host;
 function connectSocket() {
   if (socket) {
     console.error('Socket already connected');
