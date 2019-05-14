@@ -1,13 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+  <style>
+    button{
+      position: absolute;
+      top:600px;
+      left:0px;
+    }
+    canvas{
+      position: absolute;
+      left:0px;
+      top:0px;
+    }
+    body{
+      margin: 0;
+    }
+  </style>
 <meta charset="utf-8">
-<title></title>
+<title>Fight arena</title>
 </head>
 <body>
-
+  <canvas id="Canvas" width="900" height="600" style="background-color:grey"></canvas>
   <button onclick="connectSocket()">Connect</button>
-  <canvas id="Canvas" width="900" height="600" style="background-color:grey">
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/SVGBuilder.js"></script>
   <script src="sockets.js"></script>
@@ -50,12 +64,17 @@
     }
     ctx.clearRect(0,0,Canvas.width,Canvas.height);
     players.forEach(function(a){
-      ctx.fillRect(a.x-5,a.y-5,10,10);
+      ctx.beginPath();
+      ctx.arc(a.x,a.y,5,0,Math.PI*2);
+      ctx.fill();
     });
     setTimeout(update,10);
   }
   window.addEventListener('keydown', handleKeyDown, true);
   window.addEventListener('keyup', handleKeyUp, true);
+  window.addEventListener("mousemove",move,true);
+  function move(e){
+  }
 </script>
 </body>
 </html>

@@ -35,10 +35,9 @@ function connectSocket() {
   socket.on('force', function(data) {
     console.log('Force reset:', data);
     data=JSON.parse(data);
-    players.forEach(function(a){
+    players.forEach(function(a,i){
       if(data.id==a.id){
-        a.x=data.x;
-        a.y=data.y;
+        players[i]=data;
       }
     });
   });
