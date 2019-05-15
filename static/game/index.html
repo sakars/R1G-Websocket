@@ -54,9 +54,6 @@
       me.y++;
       send=true;
     }
-    if(send){
-      socket.emit("force",JSON.stringify(me));
-    }
     players.forEach(function(a, ind){
       players[0].object.translate(players[ind].x, players[ind].y, false);
     });
