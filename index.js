@@ -67,7 +67,8 @@ io.on('connection', function(socket) {
   });
   socket.on("update",function(data){
     console.log("Update:",data);
-
+    data=JSON.parse(data);
+    playas[pls[socket.id]][socket.id].keys=data.keys;
   });
   socket.on("force",function(data){
     console.log("Forced location:",data);
@@ -119,11 +120,34 @@ class RoomState {
 
 var state = new RoomState();
 function update(){
-  for(s in playas){
-    for(s2 in s){
-      s2.socket.emit("update",JSON.stringify(s));
-    }
+  for(var s in playas) for(var l in playas[s]) for(var s2 in playas[s]) if(typeof playas[s][s2] === "object"){
+    var msg={x:playas[s][s2].x,y:playas[s][s2].y,angle:playas[s][s2].angle,id:playas[s][s2].id};
+    delete msg.socket;
+    playas[s][l].socket.emit("update",JSON.stringify(msg));
   }
-  setTimeout(update,10);
+  for(var s in playas)
+  for(var l in playas[s]){
+    var o=playas[s][l];
+    if(o.keys.includes("w")){
+      o.xvel+=Math.cos(o.angle);
+      o.yvel+=Math.sin(o.angle);
+    }else
+    if(o.keys.includes("s")){
+      o.xvel-=Math.cos(o.angle);
+      o.yvel-=Math.sin(o.angle);
+    }
+    if(o.keys.includes("d")){
+      o.angle-=Math.PI*2/360;
+    }
+    if(o.keys.includes("a")){
+      o.angle+=Math.PI*2/360;
+    }
+    if(o.angle<0)o.angle+=Math.PI*2;
+    if(o.angle>0)o.angle-=Math.PI*2;
+    o.x+=o.xvel;
+    o.y+=o.yvel;
+  }
+//console.log(playas);
+  setTimeout(update,100);
 }
 update();

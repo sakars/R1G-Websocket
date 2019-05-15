@@ -37,26 +37,7 @@
     }
   }
   function update(){
-    var send=false;
-    if(pressedK.includes("a")){
-      me.x--;
-      send=true;
-    }
-    if(pressedK.includes("d")){
-      me.x++;
-      send=true;
-    }
-    if(pressedK.includes("w")){
-      me.y--;
-      send=true;
-    }
-    if(pressedK.includes("s")){
-      me.y++;
-      send=true;
-    }
-    players.forEach(function(a, ind){
-      players[0].object.translate(players[ind].x, players[ind].y, false);
-    });
+    
     setTimeout(update,500);
   }
   window.addEventListener('keydown', handleKeyDown, true);
