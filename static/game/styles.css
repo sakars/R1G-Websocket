@@ -1,6 +1,6 @@
 body{
   margin: 0;
-  background-color: white;
+  background-color: cyan;
 }
 
 #svg-container {
@@ -26,6 +26,19 @@ svg {
   width: 100%;
   margin: 10px 0 10px 0;
   padding: 10px 0 10px 0;
+  background-color: transparent;
+  font-family: Ubuntu;
+  font-size: 2vw;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  transition: 0.3s all ease;
+}
+.roomContainer button:hover{
+  color: rgba(255, 255, 255, 1);
+}
+
+.roomContainer button:focus{
+  outline: none;
 }
 
 .point {
