@@ -59,9 +59,7 @@
       me.y++;
       send=true;
     }
-    if(send){
-      socket.emit("force",JSON.stringify(me));
-    }
+    
     ctx.clearRect(0,0,Canvas.width,Canvas.height);
     players.forEach(function(a){
       ctx.beginPath();

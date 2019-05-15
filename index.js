@@ -8,7 +8,13 @@ var app = express();
 var server = app.listen(port, function() {
   console.log('Express server listening on port', port);
 });
-
+var playas={
+  none:{},
+  room1:{},
+  room2:{},
+  room3:{}
+};
+var pls={};
 // Static files
 app.use(express.static('static'));
 
@@ -27,6 +33,8 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
+  playas.none[socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[]};
+  pls[socket.id]="none";
   /*
   for (var socketId in connectionData) {
     if (!socketIds.includes(socketId)) delete connectionData[socketId];
@@ -59,16 +67,23 @@ io.on('connection', function(socket) {
   });
   socket.on("update",function(data){
     console.log("Update:",data);
-    io.sockets.emit('update', data);
+
   });
   socket.on("force",function(data){
     console.log("Forced location:",data);
     io.sockets.emit('force', data);
   });
+  socket.on("roomChange",function(data){
+    console.log(socket.id+" Changed room from "+pls[socket.id]+" to ",data);
+    delete playas[pls[socket.id]][socket.id];
+    pls[socket.id]=data;
+    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[]};
+  });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
     state.clientLeave(socket.id, reason);
     socket.broadcast.emit('leave', {id: socket.id}); // Send to every open socket, excluding the sender
+    delete playas[pls[socket.id]][socket.id];
   });
 });
 
@@ -103,3 +118,12 @@ class RoomState {
 }
 
 var state = new RoomState();
+function update(){
+  for(s in playas){
+    for(s2 in s){
+      s2.socket.emit("update",JSON.stringify(s));
+    }
+  }
+  setTimeout(update,10);
+}
+update();
