@@ -23,7 +23,6 @@ function connectSocket() {
       players[a].object = players[a].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
       players[a].groupId.scale(0.08, 0.08);
     });
-    //players[socket.id].object = cars.addSVGFile({x: me.x, y: me.y, class:"car"});
     svg.insert(document.getElementById("svg-container"), true);
 
     socket.emit("force",JSON.stringify(me));
@@ -55,6 +54,10 @@ function connectSocket() {
   socket.on('leave', function(data) {
     console.log('Incoming leave msg:', data);
     delete players[data.id];
+    gr.innerHTML="";
+    for(var k in players){
+      players[k].object=cars.addRect({x: me.x, y: me.y, width:4, height:4, class:"car"});
+    }
   });
 }
 

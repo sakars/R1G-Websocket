@@ -22,7 +22,7 @@
   var me={x:0,y:0};
   var svg, cars;
   svg = new SVGBuilder();
-  cars = svg.addGroup();
+  cars = svg.addGroup({id:"gr"});
 
   function handleKeyDown(event){//event.key
     if(!pressedK.includes(event.key)){
