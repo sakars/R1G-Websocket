@@ -21,7 +21,6 @@ function connectSocket() {
       players[a]={id:a,object:cars.addRect({x: 10, y: 10, width:4, height:4, class:"car"})};
     });
 
-    players[socket.id].object = cars.addRect({x: me.x, y: me.y, width:4, height:4, class:"car"});
 
     svg.insert(document.getElementById("svg-container"), true);
 
@@ -53,6 +52,10 @@ function connectSocket() {
   socket.on('leave', function(data) {
     console.log('Incoming leave msg:', data);
     delete players[data.id];
+    gr.innerHTML="";
+    for(var k in players){
+      players[k].object=cars.addRect({x: me.x, y: me.y, width:4, height:4, class:"car"});
+    }
   });
 }
 

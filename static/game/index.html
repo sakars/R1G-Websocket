@@ -22,7 +22,7 @@
   var me={x:10,y:10};
   var svg, cars;
   svg = new SVGBuilder();
-  cars = svg.addGroup();
+  cars = svg.addGroup({id:"gr"});
 
   function handleKeyDown(event){//event.key
     if(!pressedK.includes(event.key)){
@@ -39,6 +39,7 @@
   function update(){
     for(var k in players){
       console.log(players[k]);
+      if(players[k].x)
       players[k].object.translate(players[k].x,players[k].y,false);
     }
   }
