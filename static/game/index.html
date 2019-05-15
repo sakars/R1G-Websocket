@@ -37,8 +37,10 @@
     }
   }
   function update(){
-    
-    setTimeout(update,500);
+    for(var k in players){
+      console.log(players[k]);
+      players[k].object.translate(players[k].x,players[k].y,false);
+    }
   }
   window.addEventListener('keydown', handleKeyDown, true);
   window.addEventListener('keyup', handleKeyUp, true);

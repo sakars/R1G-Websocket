@@ -18,10 +18,10 @@ function connectSocket() {
     console.log('Init:', data);
     var ids=data.ids;
     ids.forEach(function(a){
-      players[a]={id:a};
+      players[a]={id:a,object:cars.addRect({x: 10, y: 10, width:4, height:4, class:"car"})};
     });
 
-    me.object = cars.addRect({x: me.x, y: me.y, width:4, height:4, class:"car"});
+    players[socket.id].object = cars.addRect({x: me.x, y: me.y, width:4, height:4, class:"car"});
 
     svg.insert(document.getElementById("svg-container"), true);
 
@@ -29,7 +29,7 @@ function connectSocket() {
   });
   socket.on('new-connection', function(data) {
     console.log('New connection:', data);
-    players[data.id]={id:data.id};
+    players[data.id]={id:data.id,object:cars.addRect({x: 10, y: 10, width:4, height:4, class:"car"})};
     socket.emit("force",JSON.stringify(me));
   });
   socket.on('update', function(data) {
@@ -38,6 +38,7 @@ function connectSocket() {
     for(s in msg){
       players[msg.id][s]=msg[s];
     }
+    update();
     console.log(s);
   });
   socket.on('force', function(data) {

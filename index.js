@@ -129,18 +129,18 @@ function update(){
   for(var l in playas[s]){
     var o=playas[s][l];
     if(o.keys.includes("w")){
-      o.xvel+=Math.cos(o.angle);
-      o.yvel+=Math.sin(o.angle);
+      o.xvel+=Math.cos(o.angle)/1000;
+      o.yvel+=Math.sin(o.angle)/1000;
     }else
     if(o.keys.includes("s")){
-      o.xvel-=Math.cos(o.angle);
-      o.yvel-=Math.sin(o.angle);
+      o.xvel-=o.xvel*0.1;
+      o.yvel-=o.yvel*0.1;
     }
     if(o.keys.includes("d")){
-      o.angle-=Math.PI*2/360;
+      o.angle+=Math.PI*2/360*10/100;
     }
     if(o.keys.includes("a")){
-      o.angle+=Math.PI*2/360;
+      o.angle-=Math.PI*2/360*10/100;
     }
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
@@ -148,6 +148,6 @@ function update(){
     o.y+=o.yvel;
   }
 //console.log(playas);
-  setTimeout(update,100);
+  setTimeout(update,1);
 }
 update();
