@@ -19,7 +19,7 @@
   <script src="sockets.js"></script>
   <script type="text/javascript">
   var pressedK=[];
-  var me={x:10,y:10};
+  var me={x:0,y:0};
   var svg, cars;
   svg = new SVGBuilder();
   cars = svg.addGroup({id:"gr"});
@@ -38,9 +38,10 @@
   }
   function update(){
     for(var k in players){
-      console.log(players[k]);
-      if(players[k].x)
-      players[k].object.translate(players[k].x,players[k].y,false);
+      if(players[k].object.loaded){
+        players[k].groupId.translate(players[k].x,players[k].y,false);
+        players[k].groupId.rotate(players[k].angle*180/Math.PI, 0, 0, false);
+      }
     }
   }
   window.addEventListener('keydown', handleKeyDown, true);

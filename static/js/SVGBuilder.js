@@ -90,12 +90,15 @@ class SVGElement {
   }
 
   getTransform(template) {
+    //console.log(this.element);
     if (!this.transform) this.transform = new SVGTransform(this.element, template);
     return this.transform;
   }
 
   translate(x, y, relative) {
     var t = this.getTransform("TRS"); // Tranlate+Rotate+Scale
+    //console.log(this);
+    //console.log(this.element);
     if (t.template == "TRS") {
       var params = t.list[0].params;
       if (relative) {
@@ -157,7 +160,7 @@ class SVGTransform {
         this.addDefinition("translate", [0, 0]);
         this.addDefinition("rotate", [0, 0, 0]);
         this.addDefinition("scale", [1, 1]);
-        break;
+      break;
     }
     this.template = template ? template : null;
   }
@@ -255,7 +258,7 @@ class SVGPolyline extends SVGElement {
 
   wrap(targetNode) {
     super.wrap(targetNode);
-    // TODO: parse the "points" attribute 
+    // TODO: parse the "points" attribute
   }
 }
 
@@ -498,7 +501,7 @@ class SVGPath extends SVGElement  {
 
   wrap(targetNode) {
     super.wrap(targetNode);
-    // TODO: parse the "d" attribute 
+    // TODO: parse the "d" attribute
   }
 }
 
@@ -857,7 +860,7 @@ class SVGBuilder extends SVGContainer {
         ds.dxLocal = xform.a * ds.dxScreen + xform.c * ds.dyScreen;
         ds.dyLocal = xform.b * ds.dxScreen + xform.d * ds.dyScreen;
         var localPos = {
-          x: ds.xTOffset + ds.dxLocal, 
+          x: ds.xTOffset + ds.dxLocal,
           y: ds.yTOffset + ds.dyLocal
         }
         // Call the optional callback, it has power to change (constrain) the local translation
@@ -1012,7 +1015,7 @@ class SVGSpriteInstance extends SVGGroup {
       if (!document.getElementById("clip-" + this.source.id)) return;
       if (!this.looping) return;
       this.nextFrame();
-      window.setTimeout(looper, 1000 / this.framerate);            
+      window.setTimeout(looper, 1000 / this.framerate);
     }
     this.looping = true;
     looper();
