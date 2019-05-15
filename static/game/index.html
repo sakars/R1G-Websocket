@@ -1,34 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-  <style>
-    button{
-      position: absolute;
-      top:600px;
-      left:0px;
-    }
-    canvas{
-      position: absolute;
-      left:0px;
-      top:0px;
-    }
-    body{
-      margin: 0;
-    }
-  </style>
+<link rel="stylesheet" href="styles.css">
 <meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
 <title>Fight arena</title>
 </head>
 <body>
-  <canvas id="Canvas" width="900" height="600" style="background-color:grey"></canvas>
+  <div id="svg-container"></div>
+  <div class = "roomContainer">
+    <button>Room 1</button>
+    <button>Room 2</button>
+    <button>Room 3</button>
+  </div>
   <button onclick="connectSocket()">Connect</button>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/SVGBuilder.js"></script>
   <script src="sockets.js"></script>
   <script type="text/javascript">
   var pressedK=[];
-  var ctx=Canvas.getContext("2d");
   var me={x:10,y:10};
+  var svg, cars;
+  svg = new SVGBuilder();
+  cars = svg.addGroup();
+
   function handleKeyDown(event){//event.key
     if(!pressedK.includes(event.key)){
       pressedK.push(event.key);
@@ -59,14 +54,10 @@
       me.y++;
       send=true;
     }
-    
-    ctx.clearRect(0,0,Canvas.width,Canvas.height);
-    players.forEach(function(a){
-      ctx.beginPath();
-      ctx.arc(a.x,a.y,5,0,Math.PI*2);
-      ctx.fill();
+    players.forEach(function(a, ind){
+      players[0].object.translate(players[ind].x, players[ind].y, false);
     });
-    setTimeout(update,10);
+    setTimeout(update,500);
   }
   window.addEventListener('keydown', handleKeyDown, true);
   window.addEventListener('keyup', handleKeyUp, true);

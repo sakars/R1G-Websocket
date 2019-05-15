@@ -20,6 +20,11 @@ function connectSocket() {
     ids.forEach(function(a){
       players.push({id:a});
     });
+
+    me.object = cars.addRect({x: me.x, y: me.y, width:4, height:4, class:"car"});
+
+    svg.insert(document.getElementById("svg-container"), true);
+
     socket.emit("force",JSON.stringify(me));
   });
   socket.on('new-connection', function(data) {
