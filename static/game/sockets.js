@@ -20,7 +20,11 @@ function connectSocket() {
     var ids=data.ids;
     ids.forEach(function(a){
       players[a] = {groupId: cars.addGroup(),id:a};
-      players[a].object = players[a].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
+      if(a==socket.id){
+        players[a].object = players[a].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_2.svg");
+      }else{
+        players[a].object = players[a].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
+      }
       players[a].groupId.scale(0.08, 0.08);
     });
     svg.insert(document.getElementById("svg-container"), true);
@@ -30,7 +34,9 @@ function connectSocket() {
 
   socket.on('new-connection', function(data) {
     console.log('New connection:', data);
-    players[data.id]={id:data.id,object:cars.addRect({x: 10, y: 10, width:4, height:4, class:"car"})};
+    var t=cars.addGroup();
+    players[data.id]={groupId: t,id:data.id,object:t.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg")};
+    players[data.id].groupId.scale(0.08, 0.08);
     socket.emit("force",JSON.stringify(me));
   });
   socket.on('update', function(data) {
@@ -56,7 +62,13 @@ function connectSocket() {
     delete players[data.id];
     gr.innerHTML="";
     for(var k in players){
-      players[k].object=cars.addRect({x: me.x, y: me.y, width:4, height:4, class:"car"});
+      players[k].groupId=cars.addGroup();
+      if(k==socket.id){
+        players[k].object=players[k].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_2.svg");
+      }else{
+        players[k].object=players[k].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
+      }
+      players[k].groupId.scale(0.08,0.08);
     }
   });
 }

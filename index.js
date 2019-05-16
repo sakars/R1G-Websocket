@@ -33,7 +33,7 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
-  playas.none[socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[]};
+  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[]};
   pls[socket.id]="none";
   /*
   for (var socketId in connectionData) {
@@ -137,15 +137,20 @@ function update(){
       o.yvel-=o.yvel*0.1;
     }
     if(o.keys.includes("d")){
-      o.angle+=Math.PI*2/360*10/100;
+      o.angle+=Math.PI*2/360*10/100*2;
     }
     if(o.keys.includes("a")){
-      o.angle-=Math.PI*2/360*10/100;
+      o.angle-=Math.PI*2/360*10/100*2;
     }
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
     o.x+=o.xvel;
     o.y+=o.yvel;
+
+    if(o.x<0)o.x+=600;
+    if(o.x>600)o.x-=600;
+    if(o.y<0)o.y+=600;
+    if(o.y>600)o.y-=600;
   }
 //console.log(playas);
   setTimeout(update,1);
