@@ -33,7 +33,7 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
-  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[]};
+  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0};
   pls[socket.id]="none";
   /*
   for (var socketId in connectionData) {
@@ -46,25 +46,6 @@ io.on('connection', function(socket) {
   socket.broadcast.emit('new-connection', state.publicDataClient(socket.id));
 
   // Establish the message event listeners
-
-  socket.on('msg', function(data) {
-    console.log('Incoming data on socket', socket.id, ':', data);
-    if (data.recipient == 'All') {
-      // Emit on all open sockets
-      //io.sockets.emit('msg', data); // Send to every open socket, including the sender
-      socket.broadcast.emit('msg', data); // Send to every open socket, excluding the sender
-    } else {
-      // Emit on the specific socket
-      data.note = 'This only received by me';
-      socket.broadcast.to(data.recipient).emit('msg', data);
-    }
-  });
-
-  socket.on('move', function(data) {
-    console.log('Move event from', socket.id, ':', data);
-    state.clientUpdate(socket.id, data);
-    socket.broadcast.emit('move', data); // Send to every open socket, excluding the sender
-  });
   socket.on("update",function(data){
     console.log("Update:",data);
     data=JSON.parse(data);
@@ -78,7 +59,7 @@ io.on('connection', function(socket) {
     console.log(socket.id+" Changed room from "+pls[socket.id]+" to ",data);
     delete playas[pls[socket.id]][socket.id];
     pls[socket.id]=data;
-    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[]};
+    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[],wheel:0};
   });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
@@ -133,8 +114,8 @@ function update(){
       o.yvel+=Math.sin(o.angle)/1000;
     }else
     if(o.keys.includes("s")){
-      o.xvel-=o.xvel*0.1;
-      o.yvel-=o.yvel*0.1;
+      o.xvel-=o.xvel*0.01;
+      o.yvel-=o.yvel*0.01;
     }
     if(o.keys.includes("d")){
       o.angle+=Math.PI*2/360*10/100*2;
