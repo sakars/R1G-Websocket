@@ -1,6 +1,6 @@
 var express = require('express');
 var socket = require('socket.io');
-
+var fs = require('fs');
 var port = 1234;
 
 // App setuo
@@ -59,7 +59,7 @@ io.on('connection', function(socket) {
     console.log(socket.id+" Changed room from "+pls[socket.id]+" to ",data);
     delete playas[pls[socket.id]][socket.id];
     pls[socket.id]=data;
-    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[],wheel:0};
+    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0};
   });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
@@ -109,22 +109,26 @@ function update(){
   for(var s in playas)
   for(var l in playas[s]){
     var o=playas[s][l];
-    if(o.keys.includes("w")){
-      o.xvel+=Math.cos(o.angle)/1000;
-      o.yvel+=Math.sin(o.angle)/1000;
+    if(o.keys.includes("w") && o.motor<1){
+      o.motor+=0.01;
     }else
     if(o.keys.includes("s")){
       o.xvel-=o.xvel*0.01;
       o.yvel-=o.yvel*0.01;
     }
     if(o.keys.includes("d")){
-      o.angle+=Math.PI*2/360*10/100*2;
+      o.wheel+=Math.PI*2/360/100/2;
+    //  o.angle+=Math.PI*2/360*10/100*2;
     }
     if(o.keys.includes("a")){
-      o.angle-=Math.PI*2/360*10/100*2;
+      o.wheel-=Math.PI*2/360/100/2;
+    //  o.angle-=Math.PI*2/360*10/100*2;
     }
+    o.angle+=o.wheel*mag(o.xvel,o.yvel);
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
+    o.xvel+=Math.cos(o.angle)*o.motor;
+    o.yvel+=Math.sin(o.angle)*o.motor;
     o.x+=o.xvel;
     o.y+=o.yvel;
 
@@ -136,4 +140,23 @@ function update(){
 //console.log(playas);
   setTimeout(update,1);
 }
-update();
+
+var tracks={};
+var track_names;
+function loadJSON() {
+  track_names.forEach(function(track_name){
+    var contents = fs.readFileSync("static/game/tracks/"+track_name+".json", 'utf8');
+    tracks[track_name]=JSON.parse(contents);
+    console.log(JSON.parse(contents));
+  });
+  update();
+}
+init();
+function init(){
+  var config=JSON.parse(fs.readFileSync("static/game/config.json","utf8"));
+  track_names=config.tracks;
+  loadJSON();
+}
+function mag(x, y){
+  return Math.sqrt(x**2+y**2);
+}
