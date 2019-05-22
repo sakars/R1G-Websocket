@@ -33,7 +33,7 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
-  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0};
+  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false};
   pls[socket.id]="none";
   /*
   for (var socketId in connectionData) {
@@ -59,7 +59,7 @@ io.on('connection', function(socket) {
     console.log(socket.id+" Changed room from "+pls[socket.id]+" to ",data);
     delete playas[pls[socket.id]][socket.id];
     pls[socket.id]=data;
-    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0};
+    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false};
   });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
@@ -117,15 +117,22 @@ function update(){
     }else
     if(o.keys.includes("s") && o.motor>0){
       o.motor-=0.005;
+      o.xvel-=o.xvel*0.01;
+      o.yvel-=o.yvel*0.01;
+
       if(o.motor<0){
         o.motor=0;
       }
     }else{
-      o.motor*=0.999;
-      if(o.motor<0.01)o.motor=0;
+      if(o.drift){
+        o.motor*=0.99;
+      }else{
+        o.motor*=0.999;
+      }
+      if(o.motor<0.06)o.motor=0;
     }
-    o.xvel-=o.xvel*0.01;
-    o.yvel-=o.yvel*0.01;
+    o.xvel-=o.xvel*0.001;
+    o.yvel-=o.yvel*0.001;
     if(o.keys.includes("d") && o.wheel<Math.PI*2/360*0.5){
       o.wheel+=Math.PI*2/360/100/2;
       if(o.wheel>Math.PI*2/360*0.5){
@@ -140,14 +147,30 @@ function update(){
       }
     //  o.angle-=Math.PI*2/360*10/100*2;
     }else{
-      o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4;
+      if(o.drift){
+        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/8;
+      }else{
+        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4;
+      }
     }
-    console.log(o.motor);
-    o.angle+=o.wheel*o.motor;
+
+    o.angle+=o.wheel;
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
-    o.xvel=Math.cos(o.angle)*o.motor;
-    o.yvel=Math.sin(o.angle)*o.motor;
+console.log(mag(o.xvel,o.yvel));
+    o.xvel+=(Math.cos(o.angle)*o.motor)/300;
+    o.yvel+=(Math.sin(o.angle)*o.motor)/300;
+console.log(mag(o.xvel,o.yvel));
+    if(mag(o.xvel,o.yvel)>1){
+      o.xvel/=mag(o.xvel,o.yvel);
+      o.yvel/=mag(o.xvel,o.yvel);
+    }
+console.log(mag(o.xvel,o.yvel));
+    if(mag(o.xvel,o.yvel)<0.1 && !o.keys.includes("w")){
+      o.xvel=0;
+      o.yvel=0;
+    }
+console.log(mag(o.xvel,o.yvel));
     o.x+=o.xvel;
     o.y+=o.yvel;
 

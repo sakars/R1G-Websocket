@@ -25,6 +25,7 @@
   svg.addRect({x:0,y:0,width:600,height:600});
   cars = svg.addGroup({id:"gr"});
   function handleKeyDown(event){//event.key
+    event.preventDefault();
     if(!pressedK.includes(event.key)){
       pressedK.push(event.key);
       socket.emit("update",JSON.stringify({id:socket.id, keys:pressedK}));
