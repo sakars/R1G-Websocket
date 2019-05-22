@@ -157,20 +157,16 @@ function update(){
     o.angle+=o.wheel;
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
-console.log(mag(o.xvel,o.yvel));
     o.xvel+=(Math.cos(o.angle)*o.motor)/300;
     o.yvel+=(Math.sin(o.angle)*o.motor)/300;
-console.log(mag(o.xvel,o.yvel));
     if(mag(o.xvel,o.yvel)>1){
       o.xvel/=mag(o.xvel,o.yvel);
       o.yvel/=mag(o.xvel,o.yvel);
     }
-console.log(mag(o.xvel,o.yvel));
     if(mag(o.xvel,o.yvel)<0.1 && !o.keys.includes("w")){
       o.xvel=0;
       o.yvel=0;
     }
-console.log(mag(o.xvel,o.yvel));
     o.x+=o.xvel;
     o.y+=o.yvel;
 
