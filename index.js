@@ -33,7 +33,7 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
-  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0};
+  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0};
   pls[socket.id]="none";
   /*
   for (var socketId in connectionData) {
@@ -111,24 +111,43 @@ function update(){
     var o=playas[s][l];
     if(o.keys.includes("w") && o.motor<1){
       o.motor+=0.01;
+      if(o.motor>1){
+        o.motor=1;
+      }
     }else
-    if(o.keys.includes("s")){
-      o.xvel-=o.xvel*0.01;
-      o.yvel-=o.yvel*0.01;
+    if(o.keys.includes("s") && o.motor>0){
+      o.motor-=0.005;
+      if(o.motor<0){
+        o.motor=0;
+      }
+    }else{
+      o.motor*=0.999;
+      if(o.motor<0.01)o.motor=0;
     }
-    if(o.keys.includes("d")){
+    o.xvel-=o.xvel*0.01;
+    o.yvel-=o.yvel*0.01;
+    if(o.keys.includes("d") && o.wheel<Math.PI*2/360*0.5){
       o.wheel+=Math.PI*2/360/100/2;
+      if(o.wheel>Math.PI*2/360*0.5){
+        o.wheel=Math.PI*2/360*0.5;
+      }
     //  o.angle+=Math.PI*2/360*10/100*2;
-    }
-    if(o.keys.includes("a")){
+    }else
+    if(o.keys.includes("a") && o.wheel>-Math.PI*2/360*0.5){
       o.wheel-=Math.PI*2/360/100/2;
+      if(o.wheel<-Math.PI*2/360*0.5){
+        o.wheel=-Math.PI*2/360*0.5;
+      }
     //  o.angle-=Math.PI*2/360*10/100*2;
+    }else{
+      o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4;
     }
-    o.angle+=o.wheel*mag(o.xvel,o.yvel);
+    console.log(o.motor);
+    o.angle+=o.wheel*o.motor;
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
-    o.xvel+=Math.cos(o.angle)*o.motor;
-    o.yvel+=Math.sin(o.angle)*o.motor;
+    o.xvel=Math.cos(o.angle)*o.motor;
+    o.yvel=Math.sin(o.angle)*o.motor;
     o.x+=o.xvel;
     o.y+=o.yvel;
 
