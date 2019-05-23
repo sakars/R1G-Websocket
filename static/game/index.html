@@ -24,6 +24,8 @@
   svg = new SVGBuilder();
   svg.addRect({x:0,y:0,width:600,height:600});
   cars = svg.addGroup({id:"gr"});
+  var track;
+  var walls=svg.addGroup();
   function handleKeyDown(event){//event.key
     event.preventDefault();
     if(!pressedK.includes(event.key)){
