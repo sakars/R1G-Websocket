@@ -48,18 +48,22 @@ function connectSocket() {
     update();
     //console.log(s);
   });
-  socket.on('force', function(data) {
-    console.log('Force reset:', data);
-    data=JSON.parse(data);
-    /*players.forEach(function(a,i){
-      if(data.id==a.id){
-        players[i]=data;
-      }
-    });*/
-  });
   socket.on('leave', function(data) {
     console.log('Incoming leave msg:', data);
     delete players[data.id];
+    gr.innerHTML="";
+    for(var k in players){
+      players[k].groupId=cars.addGroup();
+      if(k==socket.id){
+        players[k].object=players[k].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_2.svg");
+      }else{
+        players[k].object=players[k].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
+      }
+      players[k].groupId.scale(0.08,0.08);
+    }
+  });
+  socket.on("hardReset",function(data){
+    players=JSON.parse(data);
     gr.innerHTML="";
     for(var k in players){
       players[k].groupId=cars.addGroup();
@@ -78,4 +82,13 @@ function disconnectSocket() {
     socket.disconnect();
     socket = null;
   }
+}
+r1.onclick=function(){
+  socket.emit("roomChange","room1");
+}
+r2.onclick=function(){
+  socket.emit("roomChange","room2");
+}
+r3.onclick=function(){
+  socket.emit("roomChange","room3");
 }

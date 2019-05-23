@@ -40,10 +40,12 @@ io.on('connection', function(socket) {
     if (!socketIds.includes(socketId)) delete connectionData[socketId];
   }
   */
-  socket.emit('init', {ids:socketIds, data:state.publicDataFull()});
+  socket.emit('init', {ids:Object.keys(playas.none), data:state.publicDataFull()});
 
   // Inform all other connected sockets about the new connection
-  socket.broadcast.emit('new-connection', state.publicDataClient(socket.id));
+  for(a in playas.none){
+    socket.broadcast.to(a).emit('new-connection', state.publicDataClient(socket.id));
+  }
 
   // Establish the message event listeners
   socket.on("update",function(data){
@@ -57,9 +59,24 @@ io.on('connection', function(socket) {
   });
   socket.on("roomChange",function(data){
     console.log(socket.id+" Changed room from "+pls[socket.id]+" to ",data);
-    delete playas[pls[socket.id]][socket.id];
-    pls[socket.id]=data;
-    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:10,y:10,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false};
+    delete playas[pls[socket.id]][socket.id];//delete from 1st room
+    let msg={};
+    for(car in playas[pls[socket.id]]){//reset 1st room
+      msg[car]={x:playas[pls[socket.id]][car].x,y:playas[pls[socket.id]][car].y,angle:playas[pls[socket.id]][car].angle,id:playas[pls[socket.id]][car].id};
+    }
+    for(car in playas[pls[socket.id]]){
+      socket.broadcast.to(car).emit("hardReset",JSON.stringify(msg));
+    }
+    pls[socket.id]=data;//change room location
+    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false};//insert into room
+    msg={};
+    for(car in playas[pls[socket.id]]){//reset 2nd room
+      msg[car]={x:playas[pls[socket.id]][car].x,y:playas[pls[socket.id]][car].y,angle:playas[pls[socket.id]][car].angle,id:playas[pls[socket.id]][car].id};
+    }
+    for(car in playas[pls[socket.id]]){
+      socket.broadcast.to(car).emit("hardReset",JSON.stringify(msg));
+    }
+    socket.emit("hardReset",JSON.stringify(msg));
   });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
@@ -154,7 +171,7 @@ function update(){
       }
     }
 
-    o.angle+=o.wheel;
+    o.angle+=o.wheel*mag(o.xvel,o.yvel);
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
     o.xvel+=(Math.cos(o.angle)*o.motor)/300;
