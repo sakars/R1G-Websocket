@@ -118,6 +118,7 @@ class RoomState {
 
 var state = new RoomState();
 function update(){
+  var stt=new Date().getTime();
   for(var s in playas) for(var l in playas[s]) for(var s2 in playas[s]) if(typeof playas[s][s2] === "object"){
     var msg={x:playas[s][s2].x,y:playas[s][s2].y,angle:playas[s][s2].angle,id:playas[s][s2].id};
     delete msg.socket;
@@ -127,51 +128,54 @@ function update(){
   for(var l in playas[s]){
     var o=playas[s][l];
     if(o.keys.includes("w") && o.motor<1){
-      o.motor+=0.01;
+      o.motor+=0.01*framerate;
       if(o.motor>1){
         o.motor=1;
       }
     }else
     if(o.keys.includes("s") && o.motor>0){
-      o.motor-=0.005;
-      o.xvel-=o.xvel*0.01;
-      o.yvel-=o.yvel*0.01;
+      o.motor-=0.005*framerate;
+      o.xvel-=o.xvel*0.01*framerate;
+      o.yvel-=o.yvel*0.01*framerate;
 
       if(o.motor<0){
         o.motor=0;
       }
     }else{
       if(o.drift){
-        o.motor*=0.99;
+        o.motor*=0.99**framerate;
       }else{
-        o.motor*=0.999;
+        o.motor*=0.999**framerate;
       }
       if(o.motor<0.06)o.motor=0;
     }
-    o.xvel-=o.xvel*0.001;
-    o.yvel-=o.yvel*0.001;
+    o.xvel-=o.xvel*0.001*framerate*mag(o.xvel,o.yvel);
+    o.yvel-=o.yvel*0.001*framerate*mag(o.xvel,o.yvel);
     if(o.keys.includes("d") && o.wheel<Math.PI*2/360*0.5){
-      o.wheel+=Math.PI*2/360/100/2;
+      o.wheel+=Math.PI*2/360/100/2*framerate;
       if(o.wheel>Math.PI*2/360*0.5){
         o.wheel=Math.PI*2/360*0.5;
       }
     //  o.angle+=Math.PI*2/360*10/100*2;
     }else
     if(o.keys.includes("a") && o.wheel>-Math.PI*2/360*0.5){
-      o.wheel-=Math.PI*2/360/100/2;
+      o.wheel-=Math.PI*2/360/100/2*framerate;
       if(o.wheel<-Math.PI*2/360*0.5){
         o.wheel=-Math.PI*2/360*0.5;
       }
     //  o.angle-=Math.PI*2/360*10/100*2;
     }else{
       if(o.drift){
-        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/8;
+        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/8*framerate;
       }else{
-        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4;
+        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4*framerate;
+      }
+      if(Math.abs(o.wheel)<Math.PI*2/360/10){
+        o.wheel=0;
       }
     }
 
-    o.angle+=o.wheel*mag(o.xvel,o.yvel);
+    o.angle+=o.wheel*mag(o.xvel,o.yvel)*framerate;
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
     o.xvel+=(Math.cos(o.angle)*o.motor)/300;
@@ -184,8 +188,8 @@ function update(){
       o.xvel=0;
       o.yvel=0;
     }
-    o.x+=o.xvel;
-    o.y+=o.yvel;
+    o.x+=o.xvel*framerate;
+    o.y+=o.yvel*framerate;
 
     if(o.x<0)o.x+=600;
     if(o.x>600)o.x-=600;
@@ -193,9 +197,9 @@ function update(){
     if(o.y>600)o.y-=600;
   }
 //console.log(playas);
-  setTimeout(update,1);
+  setTimeout(update,1000/framerate-(new Date().getTime()-stt));
 }
-
+var framerate=60;//for the love of god do NOT change this
 var tracks={};
 var track_names;
 function loadJSON() {
