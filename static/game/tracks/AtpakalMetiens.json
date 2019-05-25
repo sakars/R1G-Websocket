@@ -1,13 +1,14 @@
 {
   "name":"AtpakalMetiens",
+  "start":"SakumaGrieziens",
   "segments":
     {
       "SakumaGrieziens":
         {
           "name":"Sākuma Grieziens",
-          "entry_lines":
+          "exit_lines":
             [
-              {"x1":40,"y1":1086.4,"x2":433.6,"y2":1086.4,"pr_segm_name":"Finisa180"}
+              {"x1":884,"y1":22,"x2":884,"y2":511,"segm_name":"Sprauga"}
             ],
           "walls":
             [
@@ -72,9 +73,10 @@
         "Sprauga":
         {
           "name":"Sprauga",
-          "entry_lines":
+          "exit_lines":
             [
-              {"x1":884,"y1":22,"x2":884,"y2":511,"pr_segm_name":"SakumaGrieziens"}
+
+              {"x1":2087,"y1":316,"x2":2087,"y2":689,"segm_name":"Liklocis"}
             ],
           "walls":
             [
@@ -120,9 +122,9 @@
         "Liklocis":
         {
           "name":"Līklocis",
-          "entry_lines":
+          "exit_lines":
             [
-              {"x1":2087,"y1":316,"x2":2087,"y2":689,"pr_segm_name":"Sprauga"}
+              {"x1":3248,"y1":316,"x2":3248,"y2":689,"segm_name":"Grieze"}
             ],
           "walls":
             [
@@ -212,9 +214,10 @@
         "Grieze":
         {
           "name":"Grieze",
-          "entry_lines":
+          "exit_lines":
             [
-              {"x1":3248,"y1":316,"x2":3248,"y2":689,"pr_segm_name":"Liklocis"}
+              {"x1":3371,"y1":689,"x2":3371,"y2":1008,"segm_name":"BrivibasLaukums"},
+              {"x1":3371,"y1":1008,"x2":3438,"y2":1056,"segm_name":"BrivibasLaukums"}
             ],
           "walls":
             [
@@ -275,10 +278,9 @@
         "BrivibasLaukums":
         {
           "name":"Brīvības Laukums",
-          "entry_lines":
+          "exit_lines":
             [
-              {"x1":3371,"y1":689,"x2":3371,"y2":1008,"pr_segm_name":"Grieze"},
-              {"x1":3371,"y1":1008,"x2":3438,"y2":1056,"pr_segm_name":"Grieze"}
+              {"x1":1309,"y1":689,"x2":1309,"y2":1332,"segm_name":"NutonaLamatas"}
             ],
           "walls":
             [
@@ -344,9 +346,10 @@
         "NutonaLamatas":
         {
           "name":"Ņūtona Lamatas",
-          "entry_lines":
+          "exit_lines":
             [
-              {"x1":1309,"y1":689,"x2":1309,"y2":1332,"pr_segm_name":"BrivibasLaukums"}
+              {"x1":790,"y1":1488,"x2":1245,"y2":1488,"segm_name":"Finisa180"}
+
             ],
           "walls":
             [
@@ -418,9 +421,10 @@
         "Finisa180":
         {
           "name":"Finiša 180",
-          "entry_lines":
+          "exit_lines":
             [
-              {"x1":790,"y1":1488,"x2":1245,"y2":1488,"pr_segm_name":"NutonaLamatas"}
+              {"x1":40,"y1":1086.4,"x2":433.6,"y2":1086.4,"segm_name":"SakumaGrieziens"}
+
             ],
           "walls":
             [

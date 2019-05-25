@@ -22,10 +22,19 @@
   var me={x:0,y:0};
   var svg, cars;
   svg = new SVGBuilder();
-  svg.addRect({x:0,y:0,width:600,height:600});
-  cars = svg.addGroup({id:"gr"});
-  var track;
-  var walls=svg.addGroup();
+  var map=svg.addGroup({id:"ma"});
+  var fi=map.addSVGFile({x: 0, y: 0,class:"map"}, "Images/Map_1_6_LOW.svg");
+  waiter();
+  function waiter(){
+    if(fi.loaded){
+      cars = svg.addGroup({id:"gr"});
+      window.addEventListener('keydown', handleKeyDown, true);
+      window.addEventListener('keyup', handleKeyUp, true);
+      window.addEventListener("mousemove",move,true);
+    }else{
+      setTimeout(waiter,100);
+    }
+  }
   function handleKeyDown(event){//event.key
     event.preventDefault();
     if(!pressedK.includes(event.key)){
@@ -40,16 +49,17 @@
     }
   }
   function update(){
+    if(players[socket.id].object.loaded){
+      map.translate(300-players[socket.id].x,300-players[socket.id].y,false);
+    }
     for(var k in players){
       if(players[k].object.loaded){
-        players[k].groupId.translate(players[k].x-(600*0.08),players[k].y-(400*0.08),false);
+        players[k].groupId.translate(300+players[k].x-players[socket.id].x-(600*0.08),300+players[k].y-players[socket.id].y-(400*0.08),false);
         players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);
       }
     }
   }
-  window.addEventListener('keydown', handleKeyDown, true);
-  window.addEventListener('keyup', handleKeyUp, true);
-  window.addEventListener("mousemove",move,true);
+
   function move(e){
   }
 </script>

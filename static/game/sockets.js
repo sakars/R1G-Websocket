@@ -12,7 +12,6 @@ function connectSocket() {
   socket.on('connect', function() {
     console.log('Socket established, id =', socket.id);
     me.id=socket.id;
-    update();
   });
   // Listen for events
   socket.on('init', function(data) {
@@ -29,6 +28,7 @@ function connectSocket() {
     });
     svg.insert(document.getElementById("svg-container"), true);
 
+    update();
     socket.emit("force",JSON.stringify(me));
   });
 

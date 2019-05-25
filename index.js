@@ -14,6 +14,12 @@ var playas={
   room2:{},
   room3:{}
 };
+var tracksInRooms={
+  none:{},
+  room1:{},
+  room2:{},
+  room3:{}
+}
 var pls={};
 // Static files
 app.use(express.static('static'));
@@ -33,7 +39,7 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
-  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false};
+  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:tracksInRooms.start};
   pls[socket.id]="none";
   /*
   for (var socketId in connectionData) {
@@ -68,7 +74,7 @@ io.on('connection', function(socket) {
       socket.broadcast.to(car).emit("hardReset",JSON.stringify(msg));
     }
     pls[socket.id]=data;//change room location
-    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false};//insert into room
+    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:tracksInRooms.start};//insert into room
     msg={};
     for(car in playas[pls[socket.id]]){//reset 2nd room
       msg[car]={x:playas[pls[socket.id]][car].x,y:playas[pls[socket.id]][car].y,angle:playas[pls[socket.id]][car].angle,id:playas[pls[socket.id]][car].id};
@@ -128,54 +134,50 @@ function update(){
   for(var l in playas[s]){
     var o=playas[s][l];
     if(o.keys.includes("w") && o.motor<1){
-      o.motor+=0.01*framerate;
+      o.motor+=0.01*60;
       if(o.motor>1){
         o.motor=1;
       }
     }else
     if(o.keys.includes("s") && o.motor>0){
-      o.motor-=0.005*framerate;
-      o.xvel-=o.xvel*0.01*framerate;
-      o.yvel-=o.yvel*0.01*framerate;
+      o.motor-=0.005*60;
+      o.xvel-=o.xvel*0.01*60;
+      o.yvel-=o.yvel*0.01*60;
 
       if(o.motor<0){
         o.motor=0;
       }
     }else{
-      if(o.drift){
-        o.motor*=0.99**framerate;
-      }else{
-        o.motor*=0.999**framerate;
-      }
+      o.motor*=0.999**60;
       if(o.motor<0.06)o.motor=0;
     }
-    o.xvel-=o.xvel*0.001*framerate*mag(o.xvel,o.yvel);
-    o.yvel-=o.yvel*0.001*framerate*mag(o.xvel,o.yvel);
+    o.xvel-=o.xvel*0.001*60*mag(o.xvel,o.yvel);
+    o.yvel-=o.yvel*0.001*60*mag(o.xvel,o.yvel);
     if(o.keys.includes("d") && o.wheel<Math.PI*2/360*0.5){
-      o.wheel+=Math.PI*2/360/100/2*framerate;
+      o.wheel+=Math.PI*2/360/100/2*60;
       if(o.wheel>Math.PI*2/360*0.5){
         o.wheel=Math.PI*2/360*0.5;
       }
     //  o.angle+=Math.PI*2/360*10/100*2;
     }else
     if(o.keys.includes("a") && o.wheel>-Math.PI*2/360*0.5){
-      o.wheel-=Math.PI*2/360/100/2*framerate;
+      o.wheel-=Math.PI*2/360/100/2*60;
       if(o.wheel<-Math.PI*2/360*0.5){
         o.wheel=-Math.PI*2/360*0.5;
       }
     //  o.angle-=Math.PI*2/360*10/100*2;
     }else{
       if(o.drift){
-        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/8*framerate;
+        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/8*60;
       }else{
-        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4*framerate;
+        o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4*60;
       }
       if(Math.abs(o.wheel)<Math.PI*2/360/10){
         o.wheel=0;
       }
     }
 
-    o.angle+=o.wheel*mag(o.xvel,o.yvel)*framerate;
+    o.angle+=o.wheel*mag(o.xvel,o.yvel)*60;
     if(o.angle<0)o.angle+=Math.PI*2;
     if(o.angle>0)o.angle-=Math.PI*2;
     o.xvel+=(Math.cos(o.angle)*o.motor)/300;
@@ -188,18 +190,13 @@ function update(){
       o.xvel=0;
       o.yvel=0;
     }
-    o.x+=o.xvel*framerate;
-    o.y+=o.yvel*framerate;
-
-    if(o.x<0)o.x+=600;
-    if(o.x>600)o.x-=600;
-    if(o.y<0)o.y+=600;
-    if(o.y>600)o.y-=600;
+    o.x+=o.xvel*60;
+    o.y+=o.yvel*60;
   }
 //console.log(playas);
-  setTimeout(update,1000/framerate-(new Date().getTime()-stt));
+  var delay=1000/60-(new Date().getTime()-stt);
+  setTimeout(update, delay>0 ? delay : 0);
 }
-var framerate=60;//for the love of god do NOT change this
 var tracks={};
 var track_names;
 function loadJSON() {
@@ -208,6 +205,7 @@ function loadJSON() {
     tracks[track_name]=JSON.parse(contents);
     console.log(JSON.parse(contents));
   });
+  tracksInRooms.none=tracks["AtpakalMetiens"];
   update();
 }
 init();
