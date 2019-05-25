@@ -39,7 +39,7 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
-  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:tracksInRooms.start};
+  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:tracksInRooms.none.start};
   pls[socket.id]="none";
   /*
   for (var socketId in connectionData) {
@@ -74,7 +74,7 @@ io.on('connection', function(socket) {
       socket.broadcast.to(car).emit("hardReset",JSON.stringify(msg));
     }
     pls[socket.id]=data;//change room location
-    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:tracksInRooms.start};//insert into room
+    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:tracksInRooms.none.start};//insert into room
     msg={};
     for(car in playas[pls[socket.id]]){//reset 2nd room
       msg[car]={x:playas[pls[socket.id]][car].x,y:playas[pls[socket.id]][car].y,angle:playas[pls[socket.id]][car].angle,id:playas[pls[socket.id]][car].id};
@@ -182,6 +182,31 @@ function update(){
     if(o.angle>0)o.angle-=Math.PI*2;
     o.xvel+=(Math.cos(o.angle)*o.motor)/300;
     o.yvel+=(Math.sin(o.angle)*o.motor)/300;
+    let t_1=(mag(16,24)*Math.cos(Math.atan2(24,16)+o.angle));
+    let t_2=(mag(16,24)*Math.sin(Math.atan2(24,16)+o.angle));
+    var points=[
+      {x:o.x+t_1,y:o.y+t_2},
+      {x:o.x-t_2,y:o.y+t_1},
+      {x:o.x-t_1,y:o.y-t_2},
+      {x:o.x+t_2,y:o.y-t_1}
+    ];
+    var walls=tracksInRooms[pls[o.id]].segments[o.segment].walls;
+    walls.forEach(function(a){
+      a.pos.forEach(function(b,i){
+        if(i==0)return;
+        points.forEach(function(c){
+          var d=a.pos[i-1];
+          if(dist(c,b,d)<10){
+            let t_3=rotators({x:b.x-d.x,y:b.y-d.y},a.n*Math.PI/2);
+            console.log(t_3);
+            t_3.x/=mag(t_3.x,t_3.y);
+            t_3.y/=mag(t_3.x,t_3.y);
+            o.xvel=t_3.x/30;
+            o.yvel=t_3.y/30;
+          }
+        });
+      });
+    });
     if(mag(o.xvel,o.yvel)>1){
       o.xvel/=mag(o.xvel,o.yvel);
       o.yvel/=mag(o.xvel,o.yvel);
@@ -192,6 +217,14 @@ function update(){
     }
     o.x+=o.xvel*60;
     o.y+=o.yvel*60;
+    var exits=tracksInRooms[pls[o.id]].segments[o.segment].exit_lines;
+    //console.log(exits);
+    exits.forEach(function(a){
+      if(dist({x:o.x,y:o.y},{x:a.x1,y:a.y1},{x:a.x2,y:a.y2})<10){
+        console.log("'"+o.id + "' Entered "+a.segm_name);
+        o.segment=a.segm_name;
+      }
+    });
   }
 //console.log(playas);
   var delay=1000/60-(new Date().getTime()-stt);
@@ -217,3 +250,18 @@ function init(){
 function mag(x, y){
   return Math.sqrt(x**2+y**2);
 }
+function dist2(v, w) { return (v.x - w.x)**2 + (v.y - w.y)**2 }
+function dist(p, v, w) {
+  var l2 = dist2(v, w);
+  if (l2 == 0) return dist2(p, v);
+  var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.sqrt(dist2(p, { x: v.x + t * (w.x - v.x),
+                    y: v.y + t * (w.y - v.y) }));
+}
+function rotators(vec, ang)
+{
+    var cos = Math.cos(ang);
+    var sin = Math.sin(ang);
+    return {x:(vec.x * cos - vec.y * sin), y:(vec.x * sin + vec.y * cos)};
+};

@@ -50,7 +50,7 @@
   }
   function update(){
     if(players[socket.id].object.loaded){
-      map.translate(300-players[socket.id].x,300-players[socket.id].y,false);
+      map.translate(300-550-players[socket.id].x,-players[socket.id].y,false);
     }
     for(var k in players){
       if(players[k].object.loaded){
