@@ -142,10 +142,9 @@ function update(){
       }
     }else{
       o.motor*=0.9;
-      if(o.motor<0.16)o.motor=0.1;
+      if(o.motor<0.06)o.motor=0;
     }
-    o.xvel-=o.xvel*0.1*mag(o.xvel,o.yvel);
-    o.yvel-=o.yvel*0.1*mag(o.xvel,o.yvel);
+
     if(o.keys.includes("d") && o.wheel<Math.PI*2/360*0.5){
       o.wheel+=Math.PI*2/360/100/2*60;
       if(o.wheel>Math.PI*2/360*0.5){
@@ -172,7 +171,7 @@ function update(){
 
     o.angle+=o.wheel*mag(o.xvel,o.yvel)*60;
     if(o.angle<0)o.angle+=Math.PI*2;
-    if(o.angle>0)o.angle-=Math.PI*2;
+    if(o.angle>=Math.PI*2)o.angle-=Math.PI*2;
     o.xvel+=(Math.cos(o.angle)*o.motor)/300;
     o.yvel+=(Math.sin(o.angle)*o.motor)/300;
     let t_1=(mag(16,24)*Math.cos(Math.atan2(24,16)+o.angle));
@@ -191,7 +190,6 @@ function update(){
           var d=a.pos[i-1];
           if(dist(c,b,d)<10 && side(d,b,o)==a.n){
             let t_3=rotators({x:b.x-d.x,y:b.y-d.y},a.n*Math.PI/2);
-            console.log(t_3);
             t_3.x/=mag(t_3.x,t_3.y);
             t_3.y/=mag(t_3.x,t_3.y);
             o.xvel=t_3.x/30;
@@ -200,6 +198,9 @@ function update(){
         });
       });
     });
+    var adiff=Math.abs(Math.sin(Math.abs((Math.atan2(o.yvel,o.xvel)+Math.PI*2)%(Math.PI*2)-o.angle) + Math.PI/2))*0.9;
+    o.xvel-=o.xvel*0.1*mag(o.xvel,o.yvel)/adiff;
+    o.yvel-=o.yvel*0.1*mag(o.xvel,o.yvel)/adiff;
     if(mag(o.xvel,o.yvel)>1){
       o.xvel/=mag(o.xvel,o.yvel);
       o.yvel/=mag(o.xvel,o.yvel);
