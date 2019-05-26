@@ -141,11 +141,11 @@ function update(){
         o.motor=0;
       }
     }else{
-      o.motor*=0.999**60;
-      if(o.motor<0.06)o.motor=0;
+      o.motor*=0.9;
+      if(o.motor<0.16)o.motor=0.1;
     }
-    o.xvel-=o.xvel*0.001*60*mag(o.xvel,o.yvel);
-    o.yvel-=o.yvel*0.001*60*mag(o.xvel,o.yvel);
+    o.xvel-=o.xvel*0.1*mag(o.xvel,o.yvel);
+    o.yvel-=o.yvel*0.1*mag(o.xvel,o.yvel);
     if(o.keys.includes("d") && o.wheel<Math.PI*2/360*0.5){
       o.wheel+=Math.PI*2/360/100/2*60;
       if(o.wheel>Math.PI*2/360*0.5){
@@ -189,7 +189,7 @@ function update(){
         if(i==0)return;
         points.forEach(function(c){
           var d=a.pos[i-1];
-          if(dist(c,b,d)<10 && side(d,b,c)==a.n){
+          if(dist(c,b,d)<10 && side(d,b,o)==a.n){
             let t_3=rotators({x:b.x-d.x,y:b.y-d.y},a.n*Math.PI/2);
             console.log(t_3);
             t_3.x/=mag(t_3.x,t_3.y);
@@ -204,7 +204,7 @@ function update(){
       o.xvel/=mag(o.xvel,o.yvel);
       o.yvel/=mag(o.xvel,o.yvel);
     }
-    if(mag(o.xvel,o.yvel)<0.1 && !o.keys.includes("w")){
+    if(mag(o.xvel,o.yvel)<0.02 && !o.keys.includes("w")){
       o.xvel=0;
       o.yvel=0;
     }
