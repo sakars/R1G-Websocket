@@ -49,12 +49,12 @@ io.on('connection', function(socket) {
 
   // Establish the message event listeners
   socket.on("update",function(data){
-    console.log("Update:",data);
+    //console.log("Update:",data);
     data=JSON.parse(data);
     rooms[pls[socket.id]].playas[socket.id].keys=data.keys;
   });
   socket.on("force",function(data){
-    console.log("Forced location:",data);
+    //console.log("Forced location:",data);
     io.sockets.emit('force', data);
   });
   socket.on("roomChange",function(data){
@@ -132,10 +132,10 @@ function update(){
         o.motor=1;
       }
     }else
-    if(o.keys.includes("s") && o.motor>0){
-      o.motor-=0.005*60;
-      o.xvel-=o.xvel*0.01*60;
-      o.yvel-=o.yvel*0.01*60;
+    if(o.keys.includes("s")){
+      if(o.motor>0) o.motor-=0.02*60;
+      o.xvel-=o.xvel*0.05;
+      o.yvel-=o.yvel*0.05;
 
       if(o.motor<0){
         o.motor=0;
@@ -215,7 +215,7 @@ function update(){
     //console.log(exits);
     exits.forEach(function(a){
       if(dist({x:o.x,y:o.y},{x:a.x1,y:a.y1},{x:a.x2,y:a.y2})<10){
-        console.log("'"+o.id + "' Entered "+a.segm_name);
+        //console.log("'"+o.id + "' Entered "+a.segm_name);
         o.segment=a.segm_name;
       }
     });
@@ -230,7 +230,7 @@ function loadJSON() {
   track_names.forEach(function(track_name){
     var contents = fs.readFileSync("static/game/tracks/"+track_name+".json", 'utf8');
     tracks[track_name]=JSON.parse(contents);
-    console.log(JSON.parse(contents));
+    //console.log(JSON.parse(contents));
   });
   rooms.none.track=tracks["AtpakalMetiens"];
   update();
