@@ -8,17 +8,11 @@ var app = express();
 var server = app.listen(port, function() {
   console.log('Express server listening on port', port);
 });
-var playas={
-  none:{},
-  room1:{},
-  room2:{},
-  room3:{}
-};
-var tracksInRooms={
-  none:{},
-  room1:{},
-  room2:{},
-  room3:{}
+var rooms={
+  none: {playas:{},track:{}},
+  room1:{playas:{},track:{}},
+  room2:{playas:{},track:{}},
+  room3:{playas:{},track:{}}
 }
 var pls={};
 // Static files
@@ -39,17 +33,17 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
-  playas.none[socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:tracksInRooms.none.start};
+  rooms.none.playas[socket.id]=new player(socket.id,socket);
   pls[socket.id]="none";
   /*
   for (var socketId in connectionData) {
     if (!socketIds.includes(socketId)) delete connectionData[socketId];
   }
   */
-  socket.emit('init', {ids:Object.keys(playas.none), data:state.publicDataFull()});
+  socket.emit('init', {ids:Object.keys(rooms.none.playas), data:state.publicDataFull()});
 
   // Inform all other connected sockets about the new connection
-  for(a in playas.none){
+  for(a in rooms.none.playas){
     socket.broadcast.to(a).emit('new-connection', state.publicDataClient(socket.id));
   }
 
@@ -57,7 +51,7 @@ io.on('connection', function(socket) {
   socket.on("update",function(data){
     console.log("Update:",data);
     data=JSON.parse(data);
-    playas[pls[socket.id]][socket.id].keys=data.keys;
+    rooms[pls[socket.id]].playas[socket.id].keys=data.keys;
   });
   socket.on("force",function(data){
     console.log("Forced location:",data);
@@ -65,21 +59,21 @@ io.on('connection', function(socket) {
   });
   socket.on("roomChange",function(data){
     console.log(socket.id+" Changed room from "+pls[socket.id]+" to ",data);
-    delete playas[pls[socket.id]][socket.id];//delete from 1st room
+    delete rooms[pls[socket.id]].playas[socket.id];//delete from 1st room
     let msg={};
-    for(car in playas[pls[socket.id]]){//reset 1st room
-      msg[car]={x:playas[pls[socket.id]][car].x,y:playas[pls[socket.id]][car].y,angle:playas[pls[socket.id]][car].angle,id:playas[pls[socket.id]][car].id};
+    for(car in rooms[pls[socket.id]].playas){//reset 1st room
+      msg[car]={x:rooms[pls[socket.id]].playas[car].x,y:rooms[pls[socket.id]].playas[car].y,angle:rooms[pls[socket.id]].playas[car].angle,id:rooms[pls[socket.id]].playas[car].id};
     }
-    for(car in playas[pls[socket.id]]){
+    for(car in rooms[pls[socket.id]].playas){
       socket.broadcast.to(car).emit("hardReset",JSON.stringify(msg));
     }
     pls[socket.id]=data;//change room location
-    playas[pls[socket.id]][socket.id]={id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:tracksInRooms.none.start};//insert into room
+    rooms[pls[socket.id]].playas[socket.id]=new player(socket.id,socket);//insert into room
     msg={};
-    for(car in playas[pls[socket.id]]){//reset 2nd room
-      msg[car]={x:playas[pls[socket.id]][car].x,y:playas[pls[socket.id]][car].y,angle:playas[pls[socket.id]][car].angle,id:playas[pls[socket.id]][car].id};
+    for(car in rooms[pls[socket.id]].playas){//reset 2nd room
+      msg[car]={x:rooms[pls[socket.id]].playas[car].x,y:rooms[pls[socket.id]].playas[car].y,angle:rooms[pls[socket.id]].playas[car].angle,id:rooms[pls[socket.id]].playas[car].id};
     }
-    for(car in playas[pls[socket.id]]){
+    for(car in rooms[pls[socket.id]].playas){
       socket.broadcast.to(car).emit("hardReset",JSON.stringify(msg));
     }
     socket.emit("hardReset",JSON.stringify(msg));
@@ -88,7 +82,7 @@ io.on('connection', function(socket) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
     state.clientLeave(socket.id, reason);
     socket.broadcast.emit('leave', {id: socket.id}); // Send to every open socket, excluding the sender
-    delete playas[pls[socket.id]][socket.id];
+    delete rooms[pls[socket.id]].playas[socket.id];
   });
 });
 
@@ -125,14 +119,13 @@ class RoomState {
 var state = new RoomState();
 function update(){
   var stt=new Date().getTime();
-  for(var s in playas) for(var l in playas[s]) for(var s2 in playas[s]) if(typeof playas[s][s2] === "object"){
-    var msg={x:playas[s][s2].x,y:playas[s][s2].y,angle:playas[s][s2].angle,id:playas[s][s2].id};
-    delete msg.socket;
-    playas[s][l].socket.emit("update",JSON.stringify(msg));
+  for(var s in rooms) for(var l in rooms[s].playas) for(var s2 in rooms[s].playas) if(typeof rooms[s].playas[s2] === "object"){
+    var msg={x:rooms[s].playas[s2].x,y:rooms[s].playas[s2].y,angle:rooms[s].playas[s2].angle,id:rooms[s].playas[s2].id};
+    rooms[s].playas[l].socket.emit("update",JSON.stringify(msg));
   }
-  for(var s in playas)
-  for(var l in playas[s]){
-    var o=playas[s][l];
+  for(var s in rooms)
+  for(var l in rooms[s].playas){
+    var o=rooms[s].playas[l];
     if(o.keys.includes("w") && o.motor<1){
       o.motor+=0.01*60;
       if(o.motor>1){
@@ -190,13 +183,13 @@ function update(){
       {x:o.x-t_1,y:o.y-t_2},
       {x:o.x+t_2,y:o.y-t_1}
     ];
-    var walls=tracksInRooms[pls[o.id]].segments[o.segment].walls;
+    var walls=rooms[pls[o.id]].track.segments[o.segment].walls;
     walls.forEach(function(a){
       a.pos.forEach(function(b,i){
         if(i==0)return;
         points.forEach(function(c){
           var d=a.pos[i-1];
-          if(dist(c,b,d)<10){
+          if(dist(c,b,d)<10 && side(d,b,c)==a.n){
             let t_3=rotators({x:b.x-d.x,y:b.y-d.y},a.n*Math.PI/2);
             console.log(t_3);
             t_3.x/=mag(t_3.x,t_3.y);
@@ -217,7 +210,7 @@ function update(){
     }
     o.x+=o.xvel*60;
     o.y+=o.yvel*60;
-    var exits=tracksInRooms[pls[o.id]].segments[o.segment].exit_lines;
+    var exits=rooms[pls[o.id]].track.segments[o.segment].exit_lines;
     //console.log(exits);
     exits.forEach(function(a){
       if(dist({x:o.x,y:o.y},{x:a.x1,y:a.y1},{x:a.x2,y:a.y2})<10){
@@ -238,7 +231,7 @@ function loadJSON() {
     tracks[track_name]=JSON.parse(contents);
     console.log(JSON.parse(contents));
   });
-  tracksInRooms.none=tracks["AtpakalMetiens"];
+  rooms.none.track=tracks["AtpakalMetiens"];
   update();
 }
 init();
@@ -265,3 +258,19 @@ function rotators(vec, ang)
     var sin = Math.sin(ang);
     return {x:(vec.x * cos - vec.y * sin), y:(vec.x * sin + vec.y * cos)};
 };
+function side(p1,p2,pt){
+  return Math.sign((p2.x*pt.y)+(p1.x*p2.y)+(p1.y*pt.x)-(p1.y*p2.x)-(p1.x*pt.y)-(p2.y*pt.x));
+}
+function player(id,socket){//{id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,angle:0,keys:[],wheel:0,motor:0,drift:false,segment:rooms.none.track.start}
+  this.id=id;
+  this.socket=socket;
+  this.x=0;
+  this.y=0;
+  this.xvel=0;
+  this.yvel=0;
+  this.angle=0;
+  this.keys=[];
+  this.wheel=0;
+  this.motor=0;
+  this.segment=rooms.none.track.start;
+}
