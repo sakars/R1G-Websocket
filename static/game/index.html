@@ -23,7 +23,7 @@
   var svg, cars;
   svg = new SVGBuilder();
   var map=svg.addGroup({id:"ma"});
-  var fi=map.addSVGFile({x: 0, y: 0,class:"map"}, "Images/Map_1_6_LOW.svg");
+  var fi=map.addSVGFile({x: 0, y: 0,class:"map"}, "Images/Map_1_6_MID.svg");
   waiter();
   function waiter(){
     if(fi.loaded){
@@ -50,11 +50,11 @@
   }
   function update(){
     if(players[socket.id].object.loaded){
-      map.translate(300-550-players[socket.id].x,-players[socket.id].y,false);
+      map.translate(document.body.clientWidth/2-550-players[socket.id].x + 8,-players[socket.id].y,false);
     }
     for(var k in players){
       if(players[k].object.loaded){
-        players[k].groupId.translate(300+players[k].x-players[socket.id].x-(600*0.08),300+players[k].y-players[socket.id].y-(400*0.08),false);
+        players[k].groupId.translate(document.body.clientWidth/2+players[k].x-players[socket.id].x-(600*0.08),300+players[k].y-players[socket.id].y-(400*0.08),false);
         players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);
       }
     }
