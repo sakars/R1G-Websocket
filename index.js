@@ -117,6 +117,7 @@ class RoomState {
 }
 
 var state = new RoomState();
+var t=0;//temporary counter, remove when done with grass adjust
 function update(){
   var stt=new Date().getTime();
   for(var s in rooms) for(var l in rooms[s].playas) for(var s2 in rooms[s].playas) if(typeof rooms[s].playas[s2] === "object"){
@@ -168,12 +169,6 @@ function update(){
         o.wheel=0;
       }
     }
-
-    o.angle+=o.wheel*mag(o.xvel,o.yvel)*60;
-    if(o.angle<0)o.angle+=Math.PI*2;
-    if(o.angle>=Math.PI*2)o.angle-=Math.PI*2;
-    o.xvel+=(Math.cos(o.angle)*o.motor)/300;
-    o.yvel+=(Math.sin(o.angle)*o.motor)/300;
     let t_1=(mag(16,24)*Math.cos(Math.atan2(24,16)+o.angle));
     let t_2=(mag(16,24)*Math.sin(Math.atan2(24,16)+o.angle));
     var points=[
@@ -182,6 +177,37 @@ function update(){
       {x:o.x-t_1,y:o.y-t_2},
       {x:o.x+t_2,y:o.y-t_1}
     ];
+    var ingrass=1;
+    var grass=rooms[pls[o.id]].track.segments[o.segment].grass;
+    points.forEach(function(point){
+      looper:
+      for(var i=0;i<grass.length;i++){
+        var k=grass[i].pos;
+        for(var i2=1;i2<=k.length;i2++){
+          var a=k[i2 -    1    ];
+          var b=k[i2 % k.length];
+          if(side(a,b,point)!=grass[i].n){
+            continue looper;
+          }
+        }
+        ingrass++;
+        break;
+      }
+    });
+    if(ingrass>1){
+      t++;
+      //console.log(o.id+" is in the grass "+t+" times with "+(ingrass-1)+" corners.");
+    }else{
+      //console.log(o.id+" is NOT in the grass.");
+    }
+    o.angle+=o.wheel*mag(o.xvel,o.yvel)*60;
+    if(o.angle<0)o.angle+=Math.PI*2;
+    if(o.angle>=Math.PI*2)o.angle-=Math.PI*2;
+    o.xvel+=(Math.cos(o.angle)*o.motor)/300/ingrass;
+    o.yvel+=(Math.sin(o.angle)*o.motor)/300/ingrass;
+
+
+
     var walls=rooms[pls[o.id]].track.segments[o.segment].walls;
     walls.forEach(function(a){
       a.pos.forEach(function(b,i){
@@ -192,13 +218,15 @@ function update(){
             let t_3=rotators({x:b.x-d.x,y:b.y-d.y},a.n*Math.PI/2);
             t_3.x/=mag(t_3.x,t_3.y);
             t_3.y/=mag(t_3.x,t_3.y);
-            o.xvel=t_3.x/30;
-            o.yvel=t_3.y/30;
+            o.xvel=t_3.x/30/ingrass;
+            o.yvel=t_3.y/30/ingrass;
           }
         });
       });
     });
-    var adiff=Math.abs(Math.sin(Math.abs((Math.atan2(o.yvel,o.xvel)+Math.PI*2)%(Math.PI*2)-o.angle) + Math.PI/2))*0.9;
+
+    var adiff=Math.abs(Math.sin(Math.abs((Math.atan2(o.yvel,o.xvel)+Math.PI*2)%(Math.PI*2)-o.angle) + Math.PI/2))*0.8+0.1;
+    adiff/=ingrass;
     o.xvel-=o.xvel*0.1*mag(o.xvel,o.yvel)/adiff;
     o.yvel-=o.yvel*0.1*mag(o.xvel,o.yvel)/adiff;
     if(mag(o.xvel,o.yvel)>1){
