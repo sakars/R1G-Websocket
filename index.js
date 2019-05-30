@@ -13,9 +13,9 @@ var track_names;
 init();
 var rooms={
   none: {playas:{},track:tracks["Lobby"],state:"playing"},
-  room1:{playas:{},track:tracks["AtpakalMetiens"],state:"waiting",cap:2},
-  room2:{playas:{},track:{},state:"waiting",cap:3},
-  room3:{playas:{},track:{},state:"waiting",cap:4}
+  room1:{playas:{},queue:{},track:tracks["AtpakalMetiens"],state:"waiting",cap:2},
+  room2:{playas:{},queue:{},track:{},state:"waiting",cap:3},
+  room3:{playas:{},queue:{},track:{},state:"waiting",cap:4}
 }
 var pls={};
 // Static files
