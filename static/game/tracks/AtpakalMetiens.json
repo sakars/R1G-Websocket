@@ -1,6 +1,8 @@
 {
   "name":"AtpakalMetiens",
   "start":"Finisa180",
+  "d":{"x":542,"y":0},
+  "picture":["Images/Map_1_6_LOW.svg","Images/Map_1_6_MID.svg","Images/Map_1_6_HIGH.svg"],
   "segments":
     {
       "SakumaGrieziens":
@@ -514,5 +516,6 @@
       {"x":247.6,"y":1136.3, "a" : 0.5},
       {"x":189.3,"y":1157.6, "a" : 0.5},
       {"x":132.3,"y":1178.9, "a" : 0.5}
-    ]
+    ],
+  "meta":"Ftue uez'f mz qmefqd qss! Sa mimk! Efab xaawuzs mf ftq smyqe' oapq! (ROT encoded)"
 }

@@ -1,12 +1,13 @@
 {
   "name":"Lobby",
   "start":"Moment",
-  "picture": [ "Map_0_1.svg" ],
+  "d":{"x":0,"y":-352.4},
+  "picture": [ "Images/Map_0_1.svg" ],
   "segments":
     {
       "Moment":
         {
-          "name":"Moment",
+          "name":"I want to kill my shelf",
           "exit_lines":
             [],
           "walls":
@@ -15,7 +16,8 @@
                   {"x" : 702.8, "y" : 704.8},
                   {"x" : 2297.2, "y" : 704.8},
                   {"x" : 2297.2, "y" : 2295.3},
-                  {"x" : 702.8, "y" : 2295.3}
+                  {"x" : 702.8, "y" : 2295.3},
+                  {"x" : 702.8, "y" : 704.8}
                 ],"n" : 1
               }
             ],

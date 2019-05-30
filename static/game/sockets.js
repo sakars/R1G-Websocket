@@ -1,6 +1,10 @@
 var socket;
 var socketAddress = window.location.host;
 var players={};
+var done=false;
+var ids;
+var picsrc;
+var deltas;
 function connectSocket() {
   if (socket) {
     console.error('Socket already connected');
@@ -11,41 +15,31 @@ function connectSocket() {
   socket = io(socketAddress);
   socket.on('connect', function() {
     console.log('Socket established, id =', socket.id);
-    me.id=socket.id;
+    done=true;
   });
   // Listen for events
   socket.on('init', function(data) {
     console.log('Init:', data);
-    var ids=data.ids;
-    ids.forEach(function(a){
-      players[a] = {groupId: cars.addGroup(),id:a};
-      if(a==socket.id){
-        players[a].object = players[a].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_2.svg");
-      }else{
-        players[a].object = players[a].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
-      }
-      players[a].groupId.scale(0.08, 0.08);
-    });
-    svg.insert(document.getElementById("svg-container"), true);
-
-    update();
-    socket.emit("force",JSON.stringify(me));
+    ids=data.ids;
+    data=JSON.parse(data.track);
+    picsrc=data.picture[0];
+    deltas=data.d;
   });
-
   socket.on('new-connection', function(data) {
     console.log('New connection:', data);
     var t=cars.addGroup();
     players[data.id]={groupId: t,id:data.id,object:t.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg")};
     players[data.id].groupId.scale(0.08, 0.08);
-    socket.emit("force",JSON.stringify(me));
   });
   socket.on('update', function(data) {
     //console.log('Incoming move msg:', data);
-    var msg=JSON.parse(data);
-    for(s in msg){
-      players[msg.id][s]=msg[s];
+    if(done){
+      var msg=JSON.parse(data);
+      for(s in msg) if(players[msg.id]){
+        players[msg.id][s]=msg[s];
+      }
+      update();
     }
-    update();
     //console.log(s);
   });
   socket.on('leave', function(data) {

@@ -13,55 +13,11 @@
     <button id="r2">Room 2</button>
     <button id="r3">Room 3</button>
   </div>
-  <button onclick="connectSocket()">Connect</button>
+  <button onclick="connectSocket();">Connect</button>
+  <button onclick="startGame();">Play</button>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/SVGBuilder.js"></script>
   <script src="sockets.js"></script>
-  <script type="text/javascript">
-  var pressedK=[];
-  var me={x:0,y:0};
-  var svg, cars;
-  svg = new SVGBuilder();
-  var map=svg.addGroup({id:"ma"});
-  var fi=map.addSVGFile({x: 0, y: 0,class:"map"}, "Images/Map_1_6_MID.svg");
-  waiter();
-  function waiter(){
-    if(fi.loaded){
-      cars = svg.addGroup({id:"gr"});
-      window.addEventListener('keydown', handleKeyDown, true);
-      window.addEventListener('keyup', handleKeyUp, true);
-      window.addEventListener("mousemove",move,true);
-    }else{
-      setTimeout(waiter,100);
-    }
-  }
-  function handleKeyDown(event){//event.key
-    event.preventDefault();
-    if(!pressedK.includes(event.key)){
-      pressedK.push(event.key);
-      socket.emit("update",JSON.stringify({id:socket.id, keys:pressedK}));
-    }
-  }
-  function handleKeyUp(event){//event.key
-    if(pressedK.includes(event.key)){
-      pressedK.splice(pressedK.indexOf(event.key),1);
-      socket.emit("update",JSON.stringify({id:socket.id, keys:pressedK}));
-    }
-  }
-  function update(){
-    if(players[socket.id].object.loaded){
-      map.translate(document.body.clientWidth/2-550-players[socket.id].x + 8,-players[socket.id].y,false);
-    }
-    for(var k in players){
-      if(players[k].object.loaded){
-        players[k].groupId.translate(document.body.clientWidth/2+players[k].x-players[socket.id].x-(600*0.08),300+players[k].y-players[socket.id].y-(400*0.08),false);
-        players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);
-      }
-    }
-  }
-
-  function move(e){
-  }
-</script>
+  <script src="game.js"></script>
 </body>
 </html>

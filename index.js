@@ -8,11 +8,14 @@ var app = express();
 var server = app.listen(port, function() {
   console.log('Express server listening on port', port);
 });
+var tracks={};
+var track_names;
+init();
 var rooms={
-  none: {playas:{},track:{}},
-  room1:{playas:{},track:{}},
-  room2:{playas:{},track:{}},
-  room3:{playas:{},track:{}}
+  none: {playas:{},track:tracks["Lobby"],state:"playing"},
+  room1:{playas:{},track:tracks["AtpakalMetiens"],state:"waiting",cap:2},
+  room2:{playas:{},track:{},state:"waiting",cap:3},
+  room3:{playas:{},track:{},state:"waiting",cap:4}
 }
 var pls={};
 // Static files
@@ -33,29 +36,24 @@ io.on('connection', function(socket) {
   for (var s in connectedSockets) {
     socketIds.push(s);
   }
-  rooms.none.playas[socket.id]=new player(socket.id,socket);
   pls[socket.id]="none";
+  rooms.none.playas[socket.id]=new player(socket.id,socket);
   /*
   for (var socketId in connectionData) {
     if (!socketIds.includes(socketId)) delete connectionData[socketId];
   }
   */
-  socket.emit('init', {ids:Object.keys(rooms.none.playas), data:state.publicDataFull()});
+  socket.emit('init', {ids:Object.keys(rooms.none.playas), data:state.publicDataFull(), track:JSON.stringify(rooms.none.track)});
 
   // Inform all other connected sockets about the new connection
   for(a in rooms.none.playas){
     socket.broadcast.to(a).emit('new-connection', state.publicDataClient(socket.id));
   }
-
   // Establish the message event listeners
   socket.on("update",function(data){
     //console.log("Update:",data);
     data=JSON.parse(data);
     rooms[pls[socket.id]].playas[socket.id].keys=data.keys;
-  });
-  socket.on("force",function(data){
-    //console.log("Forced location:",data);
-    io.sockets.emit('force', data);
   });
   socket.on("roomChange",function(data){
     console.log(socket.id+" Changed room from "+pls[socket.id]+" to ",data);
@@ -120,11 +118,11 @@ var state = new RoomState();
 var t=0;//temporary counter, remove when done with grass adjust
 function update(){
   var stt=new Date().getTime();
-  for(var s in rooms) for(var l in rooms[s].playas) for(var s2 in rooms[s].playas) if(typeof rooms[s].playas[s2] === "object"){
-    var msg={x:rooms[s].playas[s2].x,y:rooms[s].playas[s2].y,angle:rooms[s].playas[s2].angle,id:rooms[s].playas[s2].id};
-    rooms[s].playas[l].socket.emit("update",JSON.stringify(msg));
+  for(var s in rooms) if(rooms[s].state=="playing") for(var l in rooms[s].playas) for(var s2 in rooms[s].playas) if(typeof rooms[s].playas[s2] === "object"){
+      var msg={x:rooms[s].playas[s2].x,y:rooms[s].playas[s2].y,angle:rooms[s].playas[s2].angle,id:rooms[s].playas[s2].id};
+      rooms[s].playas[l].socket.emit("update",JSON.stringify(msg));
   }
-  for(var s in rooms)
+  for(var s in rooms) if(rooms[s].state=="playing")
   for(var l in rooms[s].playas){
     var o=rooms[s].playas[l];
     if(o.keys.includes("w") && o.motor<1){
@@ -252,18 +250,14 @@ function update(){
   var delay=1000/60-(new Date().getTime()-stt);
   setTimeout(update, delay>0 ? delay : 0);
 }
-var tracks={};
-var track_names;
 function loadJSON() {
   track_names.forEach(function(track_name){
     var contents = fs.readFileSync("static/game/tracks/"+track_name+".json", 'utf8');
     tracks[track_name]=JSON.parse(contents);
     //console.log(JSON.parse(contents));
   });
-  rooms.none.track=tracks["AtpakalMetiens"];
   update();
 }
-init();
 function init(){
   var config=JSON.parse(fs.readFileSync("static/game/config.json","utf8"));
   track_names=config.tracks;
@@ -301,5 +295,6 @@ function player(id,socket){//{id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,a
   this.keys=[];
   this.wheel=0;
   this.motor=0;
-  this.segment=rooms.none.track.start;
+  console.log(rooms[pls[this.id]]);
+  this.segment=rooms[pls[this.id]].track.start;
 }
