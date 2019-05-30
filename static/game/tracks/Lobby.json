@@ -1,6 +1,7 @@
 {
   "name":"Lobby",
   "start":"Moment",
+  "picture": [ "Map_0_1.svg" ],
   "segments":
     {
       "Moment":
