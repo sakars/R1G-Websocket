@@ -1,7 +1,7 @@
 {
   "name":"AtpakalMetiens",
   "start":"Finisa180",
-  "d":{"x":542,"y":0},
+  "d":{"x":542,"y":300},
   "picture":["Images/Map_1_6_LOW.svg","Images/Map_1_6_MID.svg","Images/Map_1_6_HIGH.svg"],
   "segments":
     {

@@ -46,7 +46,7 @@ function handleKeyUp(event){//event.key
 function update(){
   if(players[socket.id]){
     if(players[socket.id].object.loaded){
-      map.translate(document.body.clientWidth/2-deltas.x-players[socket.id].x,-players[socket.id].y-deltas.y,false);
+      map.translate(document.body.clientWidth/2-deltas.x-players[socket.id].x,-players[socket.id].y-deltas.y+300,false);
     }
     for(var k in players){
       if(players[k].object.loaded){
@@ -55,4 +55,7 @@ function update(){
       }
     }
   }
+}
+function queue(){
+  socket.emit("queue");
 }

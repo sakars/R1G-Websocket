@@ -1,7 +1,7 @@
 {
   "name":"Lobby",
   "start":"Moment",
-  "d":{"x":0,"y":-352.4},
+  "d":{"x":0,"y":0},
   "picture": [ "Images/Map_0_1.svg" ],
   "segments":
     {

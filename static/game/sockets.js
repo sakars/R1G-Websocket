@@ -77,12 +77,3 @@ function disconnectSocket() {
     socket = null;
   }
 }
-r1.onclick=function(){
-  socket.emit("roomChange","room1");
-}
-r2.onclick=function(){
-  socket.emit("roomChange","room2");
-}
-r3.onclick=function(){
-  socket.emit("roomChange","room3");
-}
