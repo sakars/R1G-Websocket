@@ -1,4 +1,4 @@
-var pressedK,svg,cars,map,fi;
+var picsrc,pressedK,svg,cars,map,fi;
 function startGame(){
   let t=undefined;
   pressedK=svg=cars=map=fi=undefined;
@@ -46,12 +46,13 @@ function handleKeyUp(event){//event.key
 function update(){
   if(players[socket.id]){
     if(players[socket.id].object.loaded){
-      map.translate(document.body.clientWidth/2-deltas.x-players[socket.id].x,-players[socket.id].y-deltas.y+300,false);
+      if(!isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))map.translate(document.body.clientWidth/2-deltas.x-players[socket.id].x,-players[socket.id].y-deltas.y+300,false);
     }
     for(var k in players){
       if(players[k].object.loaded){
+        if(!isNaN(players[k].x) && !isNaN(players[k].y) && !isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))
         players[k].groupId.translate(document.body.clientWidth/2+players[k].x-players[socket.id].x-(600*0.08),300+players[k].y-players[socket.id].y-(400*0.08),false);
-        players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);
+        if(!isNaN(players[k].angle))players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);
       }
     }
   }

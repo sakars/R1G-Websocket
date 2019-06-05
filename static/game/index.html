@@ -7,11 +7,36 @@
 <title>Fight arena</title>
 </head>
 <body>
-  <div id="svg-container"></div>
-  <button onclick="connectSocket();">Connect</button>
-  <button onclick="startGame();">Play</button>
-  <button onclick="queue();">Queue</button>
-  <button onclick=""></button>
+  <div id="play">
+    <div id="svg-container"></div>
+    <button onclick="connectSocket();">Connect</button>
+    <button onclick="queue();">Queue</button>
+    <button onclick=""></button>
+  </div>
+  <div id = "lapTBack">
+    <div class = "center desc">Vote for race type*:</div><br>
+    <div class = "center">
+      <button id="lap1" sl = "false" class = "desc largeButton redish" onclick = "selectVoteType(1, this)">Sprint<br><span class = "smaller">3-10 laps</span></button>
+      <button id="lap2" sl = "false" class = "desc largeButton redish" onclick = "selectVoteType(2, this)">Ride<br><span class = "smaller">10-24 laps</span></button>
+      <button id="lap3" sl = "false" class = "desc largeButton redish" onclick = "selectVoteType(3, this)">Marathon<br><span class = "smaller">25-50 laps</span></button>
+    </div>
+    <div class = "center"><div class = "desc voteTimer">10</div></div>
+    <div class = "center bottom">
+      <div class = "desc infoForVote smaller">
+        *You may choose multiple types. The most voted for race type is used. In case of multiple, it is chosen randomly.
+      </div>
+    </div>
+  </div>
+  <div id = "lapCBack">
+      <div class = "center desc">Vote for lap count (<span id = "raceType" value = "1">Sprint</span>)*:</div><br>
+      <div class = "center"><button type="button" class = "desc redish" onclick = "lappChange(-1)">&#60;</button><div id = "lapCount" class = "desc redish">4</div><button type="button" class = "desc redish" onclick = "lappChange(1)">&#62;</button></div>
+      <div class = "center"><div class = "desc voteTimer">10</div></div>
+      <div class = "center bottom">
+      <div class = "desc infoForVote smaller">
+        *The rounded average of all votes is used for lap count. Starting positions are determined randomly.
+      </div>
+    </div>
+  </div>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/SVGBuilder.js"></script>
   <script src="sockets.js"></script>
