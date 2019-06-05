@@ -56,6 +56,7 @@ function connectSocket() {
       }
       players[k].groupId.scale(0.08,0.08);
     }
+    startGame();
   });
   socket.on("hardReset",function(data){
     players=JSON.parse(data);
