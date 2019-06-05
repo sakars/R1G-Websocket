@@ -291,7 +291,8 @@ function update(){
       var room=rooms[s];
       if(queue.length()>=4 || (Object.values(rooms.none.playas).length==queue.length() && queue.length()>0)){//enough players?
         room.stateTime=15*60;//set voting time
-        for(var i=0;i<Math.min(queue.length(),4);i++){
+        let l=queue.length();
+        for(var i=0;i<Math.min(l,4);i++){
           let id=queue.next();
           room.playas[id]=new player(id,rooms.none.playas[id].socket);
           pls[id]=s;
