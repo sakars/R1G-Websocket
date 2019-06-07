@@ -278,7 +278,6 @@ function update(){
                 rooms.none.playas[o.id].x=rooms.none.track.start_pos[0].x;
                 rooms.none.playas[o.id].y=rooms.none.track.start_pos[0].y;
                 rooms.none.playas[o.id].angle=rooms.none.track.start_pos[0].a*-Math.PI;
-
               }
               o.lap++;
             }
@@ -296,10 +295,12 @@ function update(){
           let id=queue.next();
           room.playas[id]=new player(id,rooms.none.playas[id].socket);
           pls[id]=s;
-          rooms.none.playas[id].socket.emit("votingTSt");
-            room.playas[id].voted={};
+          room.playas[id].voted={};
           delete rooms.none.playas[id];
         }
+        Object.values(room.playas).forEach(function(a){
+          a.socket.emit("votingTSt");
+        });
         room.state="votingT";
         //console.log(queue,room.playas);
       }
@@ -339,7 +340,7 @@ function update(){
         laps=Math.round(laps/Object.keys(room.playas).length);
         room.laps=laps;
         Object.values(room.playas).forEach(function(a){
-          a.socket.emit("play",JSON.stringify(room.track));
+          a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas)}));
           a.segment=room.track.start;
         });
         room.state="playing";
@@ -350,6 +351,9 @@ function update(){
         });
       }
     break;
+  }
+  if(rooms[s].state!="waiting" && Object.keys(rooms[s].playas).length==0){
+    rooms[s].state="waiting";
   }
 //console.log(playas);
   var delay=1000/60-(new Date().getTime()-stt);

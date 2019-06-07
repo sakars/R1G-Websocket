@@ -117,8 +117,9 @@ function connectSocket() {
     document.getElementById("lapTBack").style.display="none";
     document.getElementById("lapCBack").style.display="none";
     data=JSON.parse(data);
-    picsrc=data.picture[0];
-    deltas=data.d;
+    picsrc=data.track.picture[0];
+    deltas=data.track.d;
+    ids=data.playas;
     startGame();
   });
   socket.on("finish",function(data){
