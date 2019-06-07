@@ -145,7 +145,7 @@ function update(){
         console.log(l," changed room mid-sending updates");
       }
   }
-  for(var s in rooms){ 
+  for(var s in rooms){
     switch(rooms[s].state){
       case "playing":
         for(var l in rooms[s].playas){
@@ -353,7 +353,7 @@ function update(){
         }
       break;
     }
-    if(rooms[s].state!="waiting" && Object.keys(rooms[s].playas).length==0){
+    if(rooms[s].state!="waiting" && Object.keys(rooms[s].playas).length==0 && s!="none"){
       rooms[s].state="waiting";
     }
   }
