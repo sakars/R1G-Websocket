@@ -59,19 +59,10 @@ function connectSocket() {
     startGame();
   });
   socket.on("hardReset",function(data){
-    players=JSON.parse(data);
-    gr.innerHTML="";
-    for(var k in players){
-      players[k].groupId=cars.addGroup();
-      if(k==socket.id){
-        players[k].object=players[k].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_2.svg");
-      }else{
-        players[k].object=players[k].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
-      }
-      players[k].groupId.scale(0.08,0.08);
-    }
-    picsrc="Images/Map_0_1.svg";
-    deltas={x:0,y:0};
+    data=JSON.parse(data);
+    ids=Object.keys(data.playas);
+    picsrc=data.map;
+    deltas=data.d;
     startGame();
   });
   //recievers for state updates

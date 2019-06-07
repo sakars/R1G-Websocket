@@ -340,6 +340,7 @@ function update(){
           });
           laps=Math.round(laps/Object.keys(room.playas).length);
           room.laps=laps;
+          console.log(laps," laps");
           Object.values(room.playas).forEach(function(a){
             a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas)}));
             a.segment=room.track.start;
@@ -451,7 +452,11 @@ function changeRoom(socket,data){
     msg[car]={x:rooms[pls[socket.id]].playas[car].x,y:rooms[pls[socket.id]].playas[car].y,angle:rooms[pls[socket.id]].playas[car].angle,id:rooms[pls[socket.id]].playas[car].id};
   }
   for(car in rooms[pls[socket.id]].playas){
-    socket.broadcast.to(car).emit("hardReset",JSON.stringify(msg));
+    socket.broadcast.to(car).emit("hardReset",JSON.stringify({
+      playas:msg,
+      map:rooms[pls[socket.id]].track.picture[0],
+      d:rooms[pls[socket.id]].track.d
+    }));
   }
   pls[socket.id]=data;//change room location
   rooms[pls[socket.id]].playas[socket.id]=new player(socket.id,socket);//insert into room
@@ -460,7 +465,15 @@ function changeRoom(socket,data){
     msg[car]={x:rooms[pls[socket.id]].playas[car].x,y:rooms[pls[socket.id]].playas[car].y,angle:rooms[pls[socket.id]].playas[car].angle,id:rooms[pls[socket.id]].playas[car].id};
   }
   for(car in rooms[pls[socket.id]].playas){
-    socket.broadcast.to(car).emit("hardReset",JSON.stringify(msg));
+    socket.broadcast.to(car).emit("hardReset",JSON.stringify({
+      playas:msg,
+      map:rooms[data].track.picture[0],
+      d:rooms[data].track.d
+    }));
   }
-  socket.emit("hardReset",JSON.stringify(msg));
+  socket.emit("hardReset",JSON.stringify({
+    playas:msg,
+    map:rooms[data].track.picture[0],
+    d:rooms[data].track.d
+  }));
 }
