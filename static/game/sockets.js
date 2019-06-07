@@ -131,7 +131,7 @@ function disconnectSocket() {
     socket = null;
   }
 }
-typeVote={1:false,2:false,3:false};
+typeVote={1:"false",2:"false",3:"false"};
 function selectVoteType(btnId, it){//race type buttons activate this
     if(it.getAttribute("sl") == "false"){
         it.style.border = "3px solid #ff7063";

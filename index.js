@@ -294,10 +294,8 @@ function update(){
           let l=queue.length();
           for(var i=0;i<Math.min(l,4);i++){
             let id=queue.next();
-            room.playas[id]=new player(id,rooms.none.playas[id].socket);
-            pls[id]=s;
+            changeRoom(rooms.none.playas[id].socket,s);
             room.playas[id].voted={};
-            delete rooms.none.playas[id];
           }
           Object.values(room.playas).forEach(function(a){
             a.socket.emit("votingTSt");
@@ -314,9 +312,9 @@ function update(){
           var rideinfo={"1":{min:3,max:10,step:1,start:6},"2":{min:10,max:24,step:2,start:16},"3":{min:25,max:50,step:5,start:35}};
           var k={"1":0,"2":0,"3":0};
           Object.values(room.playas).forEach(function(a){
-            if(a.voted["1"])k["1"]++;
-            if(a.voted["2"])k["2"]++;
-            if(a.voted["3"])k["3"]++;
+            if(a.voted["1"]=="true")k["1"]++;
+            if(a.voted["2"]=="true")k["2"]++;
+            if(a.voted["3"]=="true")k["3"]++;
           });
           var x=Object.keys(k).reduce(function(a, b){ return k[a]+Math.random() > k[b]+Math.random() ? a : b });
           Object.values(room.playas).forEach(function(a){
