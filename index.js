@@ -145,215 +145,217 @@ function update(){
         console.log(l," changed room mid-sending updates");
       }
   }
-  for(var s in rooms) switch(rooms[s].state){
-    case "playing":
-      for(var l in rooms[s].playas){
-        var o=rooms[s].playas[l];
-        if(o.keys.includes("w") && o.motor<1){
-          o.motor+=0.01*60;
-          if(o.motor>1){
-            o.motor=1;
-          }
-        }else
-        if(o.keys.includes("s")){
-          if(o.motor>0) o.motor-=0.02*60;
-          o.xvel-=o.xvel*0.05;
-          o.yvel-=o.yvel*0.05;
-
-          if(o.motor<0){
-            o.motor=0;
-          }
-        }else{
-          o.motor*=0.9;
-          if(o.motor<0.06)o.motor=0;
-        }
-
-        if(o.keys.includes("d") && o.wheel<Math.PI*2/360*0.5){
-          o.wheel+=Math.PI*2/360/100/2*60;
-          if(o.wheel>Math.PI*2/360*0.5){
-            o.wheel=Math.PI*2/360*0.5;
-          }
-        //  o.angle+=Math.PI*2/360*10/100*2;
-        }else
-        if(o.keys.includes("a") && o.wheel>-Math.PI*2/360*0.5){
-          o.wheel-=Math.PI*2/360/100/2*60;
-          if(o.wheel<-Math.PI*2/360*0.5){
-            o.wheel=-Math.PI*2/360*0.5;
-          }
-        //  o.angle-=Math.PI*2/360*10/100*2;
-        }else{
-          if(o.drift){
-            o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/8*60;
-          }else{
-            o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4*60;
-          }
-          if(Math.abs(o.wheel)<Math.PI*2/360/10){
-            o.wheel=0;
-          }
-        }
-        let t_1=(mag(16,24)*Math.cos(Math.atan2(24,16)+o.angle));
-        let t_2=(mag(16,24)*Math.sin(Math.atan2(24,16)+o.angle));
-        var points=[
-          {x:o.x+t_1,y:o.y+t_2},
-          {x:o.x-t_2,y:o.y+t_1},
-          {x:o.x-t_1,y:o.y-t_2},
-          {x:o.x+t_2,y:o.y-t_1}
-        ];
-        var ingrass=1;
-        var grass=rooms[pls[o.id]].track.segments[o.segment].grass;
-        points.forEach(function(point){
-          looper:
-          for(var i=0;i<grass.length;i++){
-            var k=grass[i].pos;
-            for(var i2=1;i2<=k.length;i2++){
-              var a=k[i2 -    1    ];
-              var b=k[i2 % k.length];
-              if(side(a,b,point)!=grass[i].n){
-                continue looper;
-              }
+  for(var s in rooms){ 
+    switch(rooms[s].state){
+      case "playing":
+        for(var l in rooms[s].playas){
+          var o=rooms[s].playas[l];
+          if(o.keys.includes("w") && o.motor<1){
+            o.motor+=0.01*60;
+            if(o.motor>1){
+              o.motor=1;
             }
-            ingrass++;
-            break;
+          }else
+          if(o.keys.includes("s")){
+            if(o.motor>0) o.motor-=0.02*60;
+            o.xvel-=o.xvel*0.05;
+            o.yvel-=o.yvel*0.05;
+
+            if(o.motor<0){
+              o.motor=0;
+            }
+          }else{
+            o.motor*=0.9;
+            if(o.motor<0.06)o.motor=0;
           }
-        });
-        if(ingrass>1){
-          t++;
-          //console.log(o.id+" is in the grass "+t+" times with "+(ingrass-1)+" corners.");
-        }
-        o.angle+=o.wheel*mag(o.xvel,o.yvel)*60;
-        if(o.angle<0)o.angle+=Math.PI*2;
-        if(o.angle>=Math.PI*2)o.angle-=Math.PI*2;
-        o.xvel+=(Math.cos(o.angle)*o.motor)/300/ingrass;
-        o.yvel+=(Math.sin(o.angle)*o.motor)/300/ingrass;
 
-
-
-        var walls=rooms[pls[o.id]].track.segments[o.segment].walls;
-        walls.forEach(function(a){
-          a.pos.forEach(function(b,i){
-            if(i==0)return;
-            points.forEach(function(c){
-              var d=a.pos[i-1];
-              if(dist(c,b,d)<10 && side(d,b,o)==a.n){
-                let t_3=rotators({x:b.x-d.x,y:b.y-d.y},a.n*Math.PI/2);
-                t_3.x/=mag(t_3.x,t_3.y);
-                t_3.y/=mag(t_3.x,t_3.y);
-                o.xvel=t_3.x/30/ingrass;
-                o.yvel=t_3.y/30/ingrass;
+          if(o.keys.includes("d") && o.wheel<Math.PI*2/360*0.5){
+            o.wheel+=Math.PI*2/360/100/2*60;
+            if(o.wheel>Math.PI*2/360*0.5){
+              o.wheel=Math.PI*2/360*0.5;
+            }
+          //  o.angle+=Math.PI*2/360*10/100*2;
+          }else
+          if(o.keys.includes("a") && o.wheel>-Math.PI*2/360*0.5){
+            o.wheel-=Math.PI*2/360/100/2*60;
+            if(o.wheel<-Math.PI*2/360*0.5){
+              o.wheel=-Math.PI*2/360*0.5;
+            }
+          //  o.angle-=Math.PI*2/360*10/100*2;
+          }else{
+            if(o.drift){
+              o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/8*60;
+            }else{
+              o.wheel-=Math.sign(o.wheel)*Math.PI*2/360/100/4*60;
+            }
+            if(Math.abs(o.wheel)<Math.PI*2/360/10){
+              o.wheel=0;
+            }
+          }
+          let t_1=(mag(16,24)*Math.cos(Math.atan2(24,16)+o.angle));
+          let t_2=(mag(16,24)*Math.sin(Math.atan2(24,16)+o.angle));
+          var points=[
+            {x:o.x+t_1,y:o.y+t_2},
+            {x:o.x-t_2,y:o.y+t_1},
+            {x:o.x-t_1,y:o.y-t_2},
+            {x:o.x+t_2,y:o.y-t_1}
+          ];
+          var ingrass=1;
+          var grass=rooms[pls[o.id]].track.segments[o.segment].grass;
+          points.forEach(function(point){
+            looper:
+            for(var i=0;i<grass.length;i++){
+              var k=grass[i].pos;
+              for(var i2=1;i2<=k.length;i2++){
+                var a=k[i2 -    1    ];
+                var b=k[i2 % k.length];
+                if(side(a,b,point)!=grass[i].n){
+                  continue looper;
+                }
               }
+              ingrass++;
+              break;
+            }
+          });
+          if(ingrass>1){
+            t++;
+            //console.log(o.id+" is in the grass "+t+" times with "+(ingrass-1)+" corners.");
+          }
+          o.angle+=o.wheel*mag(o.xvel,o.yvel)*60;
+          if(o.angle<0)o.angle+=Math.PI*2;
+          if(o.angle>=Math.PI*2)o.angle-=Math.PI*2;
+          o.xvel+=(Math.cos(o.angle)*o.motor)/300/ingrass;
+          o.yvel+=(Math.sin(o.angle)*o.motor)/300/ingrass;
+
+
+
+          var walls=rooms[pls[o.id]].track.segments[o.segment].walls;
+          walls.forEach(function(a){
+            a.pos.forEach(function(b,i){
+              if(i==0)return;
+              points.forEach(function(c){
+                var d=a.pos[i-1];
+                if(dist(c,b,d)<10 && side(d,b,o)==a.n){
+                  let t_3=rotators({x:b.x-d.x,y:b.y-d.y},a.n*Math.PI/2);
+                  t_3.x/=mag(t_3.x,t_3.y);
+                  t_3.y/=mag(t_3.x,t_3.y);
+                  o.xvel=t_3.x/30/ingrass;
+                  o.yvel=t_3.y/30/ingrass;
+                }
+              });
             });
           });
-        });
 
-        var adiff=Math.abs(Math.sin(Math.abs((Math.atan2(o.yvel,o.xvel)+Math.PI*2)%(Math.PI*2)-o.angle) + Math.PI/2))*0.8+0.1;
-        adiff/=ingrass;
-        o.xvel-=o.xvel*0.1*mag(o.xvel,o.yvel)/adiff;
-        o.yvel-=o.yvel*0.1*mag(o.xvel,o.yvel)/adiff;
-        if(mag(o.xvel,o.yvel)>1){
-          o.xvel/=mag(o.xvel,o.yvel);
-          o.yvel/=mag(o.xvel,o.yvel);
-        }
-        if(mag(o.xvel,o.yvel)<0.02 && !o.keys.includes("w")){
-          o.xvel=0;
-          o.yvel=0;
-        }
-        o.x+=o.xvel*60;
-        o.y+=o.yvel*60;
-        var exits=rooms[pls[o.id]].track.segments[o.segment].exit_lines;
-        //console.log(exits);
-        exits.forEach(function(a){
-          if(dist({x:o.x,y:o.y},{x:a.x1,y:a.y1},{x:a.x2,y:a.y2})<10){
-            //console.log("'"+o.id + "' Entered "+a.segm_name);
-            if(rooms[pls[o.id]].track.start==o.segment){
-              if(rooms[pls[o.id]].laps==o.lap){
-                if(!rooms[pls[o.id]].place)rooms[pls[o.id]].place=1;
-                o.socket.emit("finish",rooms[pls[o.id]].place);
-                rooms[pls[o.id]].place++;
-                let id=o.id;
-                if(Object.keys(rooms[pls[o.id]].playas).length==1){
-                  rooms[pls[o.id]].state="waiting";
-                  rooms[pls[o.id]].place=1;
-                }
-                changeRoom(o.socket,"none");
-                rooms.none.playas[o.id].x=rooms.none.track.start_pos[0].x;
-                rooms.none.playas[o.id].y=rooms.none.track.start_pos[0].y;
-                rooms.none.playas[o.id].angle=rooms.none.track.start_pos[0].a*-Math.PI;
-              }
-              o.lap++;
-            }
-            o.segment=a.segm_name;
+          var adiff=Math.abs(Math.sin(Math.abs((Math.atan2(o.yvel,o.xvel)+Math.PI*2)%(Math.PI*2)-o.angle) + Math.PI/2))*0.8+0.1;
+          adiff/=ingrass;
+          o.xvel-=o.xvel*0.1*mag(o.xvel,o.yvel)/adiff;
+          o.yvel-=o.yvel*0.1*mag(o.xvel,o.yvel)/adiff;
+          if(mag(o.xvel,o.yvel)>1){
+            o.xvel/=mag(o.xvel,o.yvel);
+            o.yvel/=mag(o.xvel,o.yvel);
           }
-        });
-      }
-    break;
-    case "waiting":
-      var room=rooms[s];
-      if(queue.length()>=4 || (Object.values(rooms.none.playas).length==queue.length() && queue.length()>0)){//enough players?
-        room.stateTime=15*60;//set voting time
-        let l=queue.length();
-        for(var i=0;i<Math.min(l,4);i++){
-          let id=queue.next();
-          room.playas[id]=new player(id,rooms.none.playas[id].socket);
-          pls[id]=s;
-          room.playas[id].voted={};
-          delete rooms.none.playas[id];
+          if(mag(o.xvel,o.yvel)<0.02 && !o.keys.includes("w")){
+            o.xvel=0;
+            o.yvel=0;
+          }
+          o.x+=o.xvel*60;
+          o.y+=o.yvel*60;
+          var exits=rooms[pls[o.id]].track.segments[o.segment].exit_lines;
+          //console.log(exits);
+          exits.forEach(function(a){
+            if(dist({x:o.x,y:o.y},{x:a.x1,y:a.y1},{x:a.x2,y:a.y2})<10){
+              //console.log("'"+o.id + "' Entered "+a.segm_name);
+              if(rooms[pls[o.id]].track.start==o.segment){
+                if(rooms[pls[o.id]].laps==o.lap){
+                  if(!rooms[pls[o.id]].place)rooms[pls[o.id]].place=1;
+                  o.socket.emit("finish",rooms[pls[o.id]].place);
+                  rooms[pls[o.id]].place++;
+                  let id=o.id;
+                  if(Object.keys(rooms[pls[o.id]].playas).length==1){
+                    rooms[pls[o.id]].state="waiting";
+                    rooms[pls[o.id]].place=1;
+                  }
+                  changeRoom(o.socket,"none");
+                  rooms.none.playas[o.id].x=rooms.none.track.start_pos[0].x;
+                  rooms.none.playas[o.id].y=rooms.none.track.start_pos[0].y;
+                  rooms.none.playas[o.id].angle=rooms.none.track.start_pos[0].a*-Math.PI;
+                }
+                o.lap++;
+              }
+              o.segment=a.segm_name;
+            }
+          });
         }
-        Object.values(room.playas).forEach(function(a){
-          a.socket.emit("votingTSt");
-        });
-        room.state="votingT";
-        //console.log(queue,room.playas);
-      }
-    break;
-    case "votingT":
-      var room=rooms[s];
-      if(room.stateTime==0){
-        room.stateTime=15*60;
-        var names={"1":"Sprint","2":"Ride","3":"Marathon"};
-        var rideinfo={"1":{min:3,max:10,step:1,start:6},"2":{min:10,max:24,step:2,start:16},"3":{min:25,max:50,step:5,start:35}};
-        var k={"1":0,"2":0,"3":0};
-        Object.values(room.playas).forEach(function(a){
-          if(a.voted["1"])k["1"]++;
-          if(a.voted["2"])k["2"]++;
-          if(a.voted["3"])k["3"]++;
-        });
-        var x=Object.keys(k).reduce(function(a, b){ return k[a]+Math.random() > k[b]+Math.random() ? a : b });
-        Object.values(room.playas).forEach(function(a){
-          a.socket.emit("votingLSt",JSON.stringify({type:x,name:names[x],info:rideinfo[x]}));
-          a.voted=rideinfo[x].start;
-        });
-        room.state="votingL";
-      }else{
-        room.stateTime--;
-        Object.values(room.playas).forEach(function(a){
-          a.socket.emit("voting",room.stateTime);
-        });
-      }
-    break;
-    case "votingL":
-      var room=rooms[s];
-      if(room.stateTime==0){
-        var laps=0;
-        Object.values(room.playas).forEach(function(a){
-          laps+=a.voted;
-        });
-        laps=Math.round(laps/Object.keys(room.playas).length);
-        room.laps=laps;
-        Object.values(room.playas).forEach(function(a){
-          a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas)}));
-          a.segment=room.track.start;
-        });
-        room.state="playing";
-      }else{
-        room.stateTime--;
-        Object.values(room.playas).forEach(function(a){
-          a.socket.emit("voting",room.stateTime);
-        });
-      }
-    break;
-  }
-  if(rooms[s].state!="waiting" && Object.keys(rooms[s].playas).length==0){
-    rooms[s].state="waiting";
+      break;
+      case "waiting":
+        var room=rooms[s];
+        if(queue.length()>=4 || (Object.values(rooms.none.playas).length==queue.length() && queue.length()>0)){//enough players?
+          room.stateTime=15*60;//set voting time
+          let l=queue.length();
+          for(var i=0;i<Math.min(l,4);i++){
+            let id=queue.next();
+            room.playas[id]=new player(id,rooms.none.playas[id].socket);
+            pls[id]=s;
+            room.playas[id].voted={};
+            delete rooms.none.playas[id];
+          }
+          Object.values(room.playas).forEach(function(a){
+            a.socket.emit("votingTSt");
+          });
+          room.state="votingT";
+          //console.log(queue,room.playas);
+        }
+      break;
+      case "votingT":
+        var room=rooms[s];
+        if(room.stateTime==0){
+          room.stateTime=15*60;
+          var names={"1":"Sprint","2":"Ride","3":"Marathon"};
+          var rideinfo={"1":{min:3,max:10,step:1,start:6},"2":{min:10,max:24,step:2,start:16},"3":{min:25,max:50,step:5,start:35}};
+          var k={"1":0,"2":0,"3":0};
+          Object.values(room.playas).forEach(function(a){
+            if(a.voted["1"])k["1"]++;
+            if(a.voted["2"])k["2"]++;
+            if(a.voted["3"])k["3"]++;
+          });
+          var x=Object.keys(k).reduce(function(a, b){ return k[a]+Math.random() > k[b]+Math.random() ? a : b });
+          Object.values(room.playas).forEach(function(a){
+            a.socket.emit("votingLSt",JSON.stringify({type:x,name:names[x],info:rideinfo[x]}));
+            a.voted=rideinfo[x].start;
+          });
+          room.state="votingL";
+        }else{
+          room.stateTime--;
+          Object.values(room.playas).forEach(function(a){
+            a.socket.emit("voting",room.stateTime);
+          });
+        }
+      break;
+      case "votingL":
+        var room=rooms[s];
+        if(room.stateTime==0){
+          var laps=0;
+          Object.values(room.playas).forEach(function(a){
+            laps+=a.voted;
+          });
+          laps=Math.round(laps/Object.keys(room.playas).length);
+          room.laps=laps;
+          Object.values(room.playas).forEach(function(a){
+            a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas)}));
+            a.segment=room.track.start;
+          });
+          room.state="playing";
+        }else{
+          room.stateTime--;
+          Object.values(room.playas).forEach(function(a){
+            a.socket.emit("voting",room.stateTime);
+          });
+        }
+      break;
+    }
+    if(rooms[s].state!="waiting" && Object.keys(rooms[s].playas).length==0){
+      rooms[s].state="waiting";
+    }
   }
 //console.log(playas);
   var delay=1000/60-(new Date().getTime()-stt);
