@@ -45,17 +45,9 @@ function connectSocket() {
   });
   socket.on('leave', function(data) {
     console.log('Incoming leave msg:', data);
+    data=JSON.parse(data);
     delete players[data.id];
-    gr.innerHTML="";
-    for(var k in players){
-      players[k].groupId=cars.addGroup();
-      if(k==socket.id){
-        players[k].object=players[k].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_2.svg");
-      }else{
-        players[k].object=players[k].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
-      }
-      players[k].groupId.scale(0.08,0.08);
-    }
+    ids=Object.keys(players);
     startGame();
   });
   socket.on("hardReset",function(data){

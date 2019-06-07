@@ -97,7 +97,7 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
     state.clientLeave(socket.id, reason);
-    socket.broadcast.emit('leave', {id: socket.id}); // Send to every open socket, excluding the sender
+    socket.broadcast.emit('leave',JSON.stringify( {id: socket.id} )); // Send to every open socket, excluding the sender
     delete rooms[pls[socket.id]].playas[socket.id];
     queue.remove(socket.id);
   });
