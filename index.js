@@ -294,7 +294,7 @@ function update(){
           let l=queue.length();
           for(var i=0;i<Math.min(l,4);i++){
             let id=queue.next();
-            changeRoom(rooms.none.playas[id].socket,s);
+            changeRoom(rooms.none.playas[id].socket,s,(i==Math.min(l,4)-1?true:false));
             room.playas[id].voted={};
           }
           Object.values(room.playas).forEach(function(a){
@@ -443,14 +443,14 @@ function Queue() {
     return this.data.length;
   }
 }
-function changeRoom(socket,data){
+function changeRoom(socket,data,reset){
   delete rooms[pls[socket.id]].playas[socket.id];//delete from 1st room
   let msg={};
   for(car in rooms[pls[socket.id]].playas){//reset 1st room
     msg[car]={x:rooms[pls[socket.id]].playas[car].x,y:rooms[pls[socket.id]].playas[car].y,angle:rooms[pls[socket.id]].playas[car].angle,id:rooms[pls[socket.id]].playas[car].id};
   }
   for(car in rooms[pls[socket.id]].playas){
-    socket.broadcast.to(car).emit("hardReset",JSON.stringify({
+    if(reset)socket.broadcast.to(car).emit("hardReset",JSON.stringify({
       playas:msg,
       map:rooms[pls[socket.id]].track.picture[0],
       d:rooms[pls[socket.id]].track.d
@@ -463,13 +463,13 @@ function changeRoom(socket,data){
     msg[car]={x:rooms[pls[socket.id]].playas[car].x,y:rooms[pls[socket.id]].playas[car].y,angle:rooms[pls[socket.id]].playas[car].angle,id:rooms[pls[socket.id]].playas[car].id};
   }
   for(car in rooms[pls[socket.id]].playas){
-    socket.broadcast.to(car).emit("hardReset",JSON.stringify({
+    if(reset)socket.broadcast.to(car).emit("hardReset",JSON.stringify({
       playas:msg,
       map:rooms[data].track.picture[0],
       d:rooms[data].track.d
     }));
   }
-  socket.emit("hardReset",JSON.stringify({
+  if(reset)socket.emit("hardReset",JSON.stringify({
     playas:msg,
     map:rooms[data].track.picture[0],
     d:rooms[data].track.d

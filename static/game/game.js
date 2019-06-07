@@ -7,10 +7,10 @@ function startGame(){
   svg = new SVGBuilder();
   map=svg.addGroup({id:"ma"});
   fi=map.addSVGFile({x: 0, y: 0,class:"map"}, picsrc);
+  cars = svg.addGroup({id:"gr"});
   waiter();
 }
 function waiter(){
-  cars = svg.addGroup({id:"gr"});
   if(fi.loaded && done){
     ids.forEach(function(a){
     players[a] = {groupId: cars.addGroup(),id:a};
@@ -22,12 +22,11 @@ function waiter(){
     players[a].groupId.scale(0.08, 0.08);
     });
     svg.insert(document.getElementById("svg-container"), true);
-
     update();
     window.addEventListener('keydown', handleKeyDown, true);
     window.addEventListener('keyup', handleKeyUp, true);
   }else{
-    setTimeout(waiter,100);
+    setTimeout(waiter,0);
   }
 }
 function handleKeyDown(event){//event.key
