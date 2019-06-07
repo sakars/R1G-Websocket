@@ -47,7 +47,7 @@ function connectSocket() {
     console.log('Incoming leave msg:', data);
     data=JSON.parse(data);
     delete players[data.id];
-    ids.splice(ids.indexOf(data.id),1);
+    if(ids.includes(data.id))ids.splice(ids.indexOf(data.id),1);
     console.log(data.id);
     console.log(ids);
     startGame();
