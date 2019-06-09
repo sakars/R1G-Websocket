@@ -48,7 +48,21 @@ io.on('connection', function(socket) {
     if (!socketIds.includes(socketId)) delete connectionData[socketId];
   }
   */
-  socket.emit('init', {ids:Object.keys(rooms.none.playas), data:state.publicDataFull(), track:JSON.stringify(rooms.none.track)});
+  var msg={};
+  for(car in rooms.none.playas){//reset 2nd room
+    msg[car]={
+      c:rooms.none.playas[car].cid,
+      x:rooms.none.playas[car].x,
+      y:rooms.none.playas[car].y,
+      angle:rooms.none.playas[car].angle,
+      id:rooms.none.playas[car].id
+    };
+  }
+  socket.emit('init', {
+    ids:Object.keys(rooms.none.playas),
+    playas:msg,
+    data:state.publicDataFull(),
+    track:JSON.stringify(rooms.none.track)});
 
   // Inform all other connected sockets about the new connection
   for(a in rooms.none.playas){
@@ -292,8 +306,11 @@ function update(){
         if(queue.length()>=4 || (Object.values(rooms.none.playas).length==queue.length() && queue.length()>0)){//enough players?
           room.stateTime=5*60;//set voting time
           let l=queue.length();
+          var carr=shuffle([1,2,3,4]);
+          console.log(carr);
           for(var i=0;i<Math.min(l,4);i++){
             let id=queue.next();
+            rooms.none.playas[id].cid=carr[i];
             changeRoom(rooms.none.playas[id].socket,s,(i==Math.min(l,4)-1?true:false));
             room.playas[id].voted={};
           }
@@ -340,6 +357,7 @@ function update(){
           room.laps=laps;
           console.log(laps," laps");
           var arr=shuffle([0,1,2,3]);
+
           Object.values(room.playas).forEach(function(a,i){
             a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas)}));
             a.segment=room.track.start;
@@ -348,6 +366,7 @@ function update(){
             a.y=position.y;
             a.angle=position.a*-Math.PI;
           });
+
           room.state="playing";
         }else{
           room.stateTime--;
@@ -414,6 +433,7 @@ function player(id,socket){//{id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,a
   this.lap=0;
   console.log(rooms[pls[this.id]]);
   this.segment=rooms[pls[this.id]].track.start;
+  this.cid=1;
 }
 function Queue() {
   this.data=[];
@@ -449,10 +469,18 @@ function Queue() {
   }
 }
 function changeRoom(socket,data,reset){
+  var c= rooms[pls[socket.id]].playas[socket.id].cid;
   delete rooms[pls[socket.id]].playas[socket.id];//delete from 1st room
-  let msg={};
+
+  var msg={};
   for(car in rooms[pls[socket.id]].playas){//reset 1st room
-    msg[car]={x:rooms[pls[socket.id]].playas[car].x,y:rooms[pls[socket.id]].playas[car].y,angle:rooms[pls[socket.id]].playas[car].angle,id:rooms[pls[socket.id]].playas[car].id};
+    msg[car]={
+      c:rooms[pls[socket.id]].playas[car].cid,
+      x:rooms[pls[socket.id]].playas[car].x,
+      y:rooms[pls[socket.id]].playas[car].y,
+      angle:rooms[pls[socket.id]].playas[car].angle,
+      id:rooms[pls[socket.id]].playas[car].id
+    };
   }
   for(car in rooms[pls[socket.id]].playas){
     if(reset)socket.broadcast.to(car).emit("hardReset",JSON.stringify({
@@ -462,10 +490,18 @@ function changeRoom(socket,data,reset){
     }));
   }
   pls[socket.id]=data;//change room location
+
   rooms[pls[socket.id]].playas[socket.id]=new player(socket.id,socket);//insert into room
+  rooms[pls[socket.id]].playas[socket.id].cid=c;
   msg={};
   for(car in rooms[pls[socket.id]].playas){//reset 2nd room
-    msg[car]={x:rooms[pls[socket.id]].playas[car].x,y:rooms[pls[socket.id]].playas[car].y,angle:rooms[pls[socket.id]].playas[car].angle,id:rooms[pls[socket.id]].playas[car].id};
+    msg[car]={
+      c:rooms[pls[socket.id]].playas[car].cid,
+      x:rooms[pls[socket.id]].playas[car].x,
+      y:rooms[pls[socket.id]].playas[car].y,
+      angle:rooms[pls[socket.id]].playas[car].angle,
+      id:rooms[pls[socket.id]].playas[car].id
+    };
   }
   for(car in rooms[pls[socket.id]].playas){
     if(reset)socket.broadcast.to(car).emit("hardReset",JSON.stringify({
@@ -481,19 +517,9 @@ function changeRoom(socket,data,reset){
   }));
 }
 function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
+  for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
   }
 
   return array;

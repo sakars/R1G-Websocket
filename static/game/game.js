@@ -13,12 +13,11 @@ function startGame(){
 function waiter(){
   if(fi.loaded && done){
     ids.forEach(function(a){
-    players[a] = {groupId: cars.addGroup(),id:a};
-    if(a==socket.id){
-      players[a].object = players[a].groupId.addSVGFile({class:"car"}, "Images/Car_2.svg");
-    }else{
-      players[a].object = players[a].groupId.addSVGFile({class:"car"}, "Images/Car_1.svg");
-    }
+    players[a].groupId= cars.addGroup()
+    players[a].id=a;
+
+    players[a].object = players[a].groupId.addSVGFile({class:"car"}, "Images/Car_"+players[a].c+".svg");
+
     players[a].groupId.scale(0.08, 0.08);
     });
     svg.insert(document.getElementById("svg-container"), true);
@@ -44,14 +43,16 @@ function handleKeyUp(event){//event.key
 }
 function update(){
   if(players[socket.id]){
-    if(players[socket.id].object.loaded){
-      if(!isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))map.translate(window.innerWidth/2-deltas.x-players[socket.id].x,-players[socket.id].y-deltas.y+window.innerHeight/2,false);
-    }
-    for(var k in players){
-      if(players[k].object.loaded){
-        if(!isNaN(players[k].x) && !isNaN(players[k].y) && !isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))
-        players[k].groupId.translate(window.innerWidth/2+players[k].x-players[socket.id].x-(600*0.08),window.innerHeight/2+players[k].y-players[socket.id].y-(400*0.08),false);
-        if(!isNaN(players[k].angle))players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);
+    if(players[socket.id].object){
+      if(players[socket.id].object.loaded){
+        if(!isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))map.translate(window.innerWidth/2-deltas.x-players[socket.id].x,-players[socket.id].y-deltas.y+window.innerHeight/2,false);
+      }
+      for(var k in players){
+        if(players[k].object.loaded){
+          if(!isNaN(players[k].x) && !isNaN(players[k].y) && !isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))
+          players[k].groupId.translate(window.innerWidth/2+players[k].x-players[socket.id].x-(600*0.08),window.innerHeight/2+players[k].y-players[socket.id].y-(400*0.08),false);
+          if(!isNaN(players[k].angle))players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);
+        }
       }
     }
   }

@@ -36,6 +36,7 @@ function connectSocket() {
     queueBoard.style.display = "block";
     console.log('Init:', data);
     ids=data.ids;
+    players=data.playas;
     data=JSON.parse(data.track);
     picsrc=data.picture[0];
     deltas=data.d;
@@ -70,6 +71,7 @@ function connectSocket() {
   socket.on("hardReset",function(data){
     data=JSON.parse(data);
     ids=Object.keys(data.playas);
+    players=data.playas;
     picsrc=data.map;
     deltas=data.d;
     console.log(ids);
