@@ -8,7 +8,7 @@ var deltas;
 var username;
 function getStartUser(){
     username = capitalizeFirstLetter(userN.value);
-    if(/\w+/.test(username)){
+    if(/^\w+$/.test(username)){
       loginScreen.style.display = "none";
       connectSocket();
     }
@@ -133,6 +133,10 @@ function connectSocket() {
       document.getElementById("lap"+i).style.color = "#9e2822";
       document.getElementById("lap"+i).setAttribute("sl", "false");
     }
+    queueBoard.style.display = "block";
+    queueStart.innerHTML = "Queue in!";
+    queueStart.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+    queuePlayerAmount.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
     typeVote={1:false,2:false,3:false};
   });
 }

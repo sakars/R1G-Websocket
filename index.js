@@ -275,7 +275,7 @@ function update(){
                     rooms[pls[o.id]].state="waiting";
                     rooms[pls[o.id]].place=1;
                   }
-                  changeRoom(o.socket,"none");
+                  changeRoom(o.socket,"none",true);
                   rooms.none.playas[o.id].x=rooms.none.track.start_pos[0].x;
                   rooms.none.playas[o.id].y=rooms.none.track.start_pos[0].y;
                   rooms.none.playas[o.id].angle=rooms.none.track.start_pos[0].a*-Math.PI;
@@ -339,9 +339,14 @@ function update(){
           laps=Math.round(laps/Object.keys(room.playas).length);
           room.laps=laps;
           console.log(laps," laps");
-          Object.values(room.playas).forEach(function(a){
+          var arr=shuffle([1,2,3,4]);
+          Object.values(room.playas).forEach(function(a,i){
             a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas)}));
             a.segment=room.track.start;
+            let position=room.track.start_pos[arr[i]];
+            a.x=position.x;
+            a.y=position.y;
+            a.angle=position.a*-Math.PI;
           });
           room.state="playing";
         }else{
@@ -474,4 +479,22 @@ function changeRoom(socket,data,reset){
     map:rooms[data].track.picture[0],
     d:rooms[data].track.d
   }));
+}
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }

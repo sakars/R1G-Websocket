@@ -6,7 +6,7 @@ function startGame(){
   pressedK=[];
   svg = new SVGBuilder();
   map=svg.addGroup({id:"ma"});
-  fi=map.addSVGFile({x: 0, y: 0,class:"map"}, picsrc);
+  fi=map.addSVGFile({class:"map"}, picsrc);
   cars = svg.addGroup({id:"gr"});
   waiter();
 }
@@ -15,9 +15,9 @@ function waiter(){
     ids.forEach(function(a){
     players[a] = {groupId: cars.addGroup(),id:a};
     if(a==socket.id){
-      players[a].object = players[a].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_2.svg");
+      players[a].object = players[a].groupId.addSVGFile({class:"car"}, "Images/Car_2.svg");
     }else{
-      players[a].object = players[a].groupId.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg");
+      players[a].object = players[a].groupId.addSVGFile({class:"car"}, "Images/Car_1.svg");
     }
     players[a].groupId.scale(0.08, 0.08);
     });
@@ -45,12 +45,12 @@ function handleKeyUp(event){//event.key
 function update(){
   if(players[socket.id]){
     if(players[socket.id].object.loaded){
-      if(!isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))map.translate(document.body.clientWidth/2-deltas.x-players[socket.id].x,-players[socket.id].y-deltas.y+300,false);
+      if(!isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))map.translate(window.innerWidth/2-deltas.x-players[socket.id].x,-players[socket.id].y-deltas.y+window.innerHeight/2,false);
     }
     for(var k in players){
       if(players[k].object.loaded){
         if(!isNaN(players[k].x) && !isNaN(players[k].y) && !isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))
-        players[k].groupId.translate(document.body.clientWidth/2+players[k].x-players[socket.id].x-(600*0.08),300+players[k].y-players[socket.id].y-(400*0.08),false);
+        players[k].groupId.translate(window.innerWidth/2+players[k].x-players[socket.id].x-(600*0.08),window.innerHeight/2+players[k].y-players[socket.id].y-(400*0.08),false);
         if(!isNaN(players[k].angle))players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);
       }
     }
