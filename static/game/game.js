@@ -59,3 +59,19 @@ function update(){
 function queue(){
   socket.emit("queue");
 }
+
+changeQueueType = (cText) => {
+  switch(cText){
+      case "Queue in!":
+        socket.emit("queue");
+        queueStart.innerHTML = "Unqueue";
+        queueStart.style.backgroundColor = "rgba(0, 255, 150, 0.3)";
+        queuePlayerAmount.style.backgroundColor = "rgba(0, 255, 150, 0.3)";
+      break;
+      case "Unqueue":
+        queueStart.innerHTML = "Queue in!";
+        queueStart.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+        queuePlayerAmount.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+      break;
+    }
+  }

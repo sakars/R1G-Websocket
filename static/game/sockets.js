@@ -5,6 +5,20 @@ var done=false;
 var ids;
 var picsrc;
 var deltas;
+var username;
+function getStartUser(){
+    username = capitalizeFirstLetter(userN.value);
+    if(/\w+/.test(username)){
+      loginScreen.style.display = "none";
+      connectSocket();
+    }
+    else{
+      alert("Insert valid username!");
+    }
+}
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 function connectSocket() {
   if (socket) {
     console.error('Socket already connected');
@@ -19,6 +33,7 @@ function connectSocket() {
   });
   // Listen for events
   socket.on('init', function(data) {
+    queueBoard.style.display = "block";
     console.log('Init:', data);
     ids=data.ids;
     data=JSON.parse(data.track);
@@ -66,6 +81,7 @@ function connectSocket() {
     console.log("Queue joined.");
   });
   socket.on("votingTSt",function(){
+    queueBoard.style.display = "none";
     document.getElementById("play").style.display="none";
     document.getElementById("lapTBack").style.display="block";
     document.getElementById("lapCBack").style.display="none";
@@ -130,14 +146,13 @@ function disconnectSocket() {
 typeVote={1:"false",2:"false",3:"false"};
 function selectVoteType(btnId, it){//race type buttons activate this
     if(it.getAttribute("sl") == "false"){
-        it.style.border = "3px solid #ff7063";
-        it.style.color = "#ff796d";
+        it.style.border = "3px solid rgba(255, 255, 255, 0.7)";
+        it.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
         it.setAttribute("sl", "true");
-
     }
     else{
-        it.style.border = "3px solid #a51e17";
-        it.style.color = "#9e2822";
+        it.style.border = "3px solid rgba(255, 255, 255, 0.4)";
+        it.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
         it.setAttribute("sl", "false");
     }
     typeVote[btnId]=it.getAttribute("sl");
