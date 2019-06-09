@@ -290,7 +290,7 @@ function update(){
       case "waiting":
         var room=rooms[s];
         if(queue.length()>=4 || (Object.values(rooms.none.playas).length==queue.length() && queue.length()>0)){//enough players?
-          room.stateTime=15*60;//set voting time
+          room.stateTime=5*60;//set voting time
           let l=queue.length();
           for(var i=0;i<Math.min(l,4);i++){
             let id=queue.next();
@@ -307,7 +307,7 @@ function update(){
       case "votingT":
         var room=rooms[s];
         if(room.stateTime==0){
-          room.stateTime=15*60;
+          room.stateTime=5*60;
           var names={"1":"Sprint","2":"Ride","3":"Marathon"};
           var rideinfo={"1":{min:3,max:10,step:1,start:6},"2":{min:10,max:24,step:2,start:16},"3":{min:25,max:50,step:5,start:35}};
           var k={"1":0,"2":0,"3":0};
@@ -339,12 +339,12 @@ function update(){
           laps=Math.round(laps/Object.keys(room.playas).length);
           room.laps=laps;
           console.log(laps," laps");
-          var arr=shuffle([1,2,3,4]);
+          var arr=shuffle([0,1,2,3]);
           Object.values(room.playas).forEach(function(a,i){
             a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas)}));
             a.segment=room.track.start;
             let position=room.track.start_pos[arr[i]];
-            a.x=position.x;
+            a.x=position.x + 7;
             a.y=position.y;
             a.angle=position.a*-Math.PI;
           });
