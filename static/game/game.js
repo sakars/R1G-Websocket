@@ -70,6 +70,7 @@ changeQueueType = (cText) => {
         queuePlayerAmount.style.backgroundColor = "rgba(0, 255, 150, 0.3)";
       break;
       case "Unqueue":
+        socket.emit("cancelq");
         queueStart.innerHTML = "Queue in!";
         queueStart.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
         queuePlayerAmount.style.backgroundColor = "rgba(255, 255, 255, 0.3)";

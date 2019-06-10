@@ -29,6 +29,7 @@ function connectSocket() {
   socket = io(socketAddress);
   socket.on('connect', function() {
     console.log('Socket established, id =', socket.id);
+    socket.emit("username",username);
     done=true;
   });
   // Listen for events

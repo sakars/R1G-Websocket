@@ -42,7 +42,6 @@ io.on('connection', function(socket) {
   rooms.none.playas[socket.id].x=rooms.none.track.start_pos[0].x;
   rooms.none.playas[socket.id].y=rooms.none.track.start_pos[0].y;
   rooms.none.playas[socket.id].angle=-rooms.none.track.start_pos[0].a*Math.PI;
-
   /*
   for (var socketId in connectionData) {
     if (!socketIds.includes(socketId)) delete connectionData[socketId];
@@ -62,8 +61,11 @@ io.on('connection', function(socket) {
     ids:Object.keys(rooms.none.playas),
     playas:msg,
     data:state.publicDataFull(),
-    track:JSON.stringify(rooms.none.track)});
-
+    track:JSON.stringify(rooms.none.track)
+  });
+  socket.on("username",function(data) {
+    rooms[pls[socket.id]].playas[socket.id].username;
+  });
   // Inform all other connected sockets about the new connection
   for(a in rooms.none.playas){
     socket.broadcast.to(a).emit('new-connection', state.publicDataClient(socket.id));
@@ -107,6 +109,10 @@ io.on('connection', function(socket) {
     queue.add(socket.id);
     console.log(socket.id," joined queue, queue is:",queue);
     socket.emit("queue");
+  });
+  socket.on("cancelq",function(){
+    queue.remove(socket.id);
+    console.log(socket.id," canceled queue, queue is:",queue);
   });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
@@ -152,11 +158,17 @@ var t=0;//temporary counter, remove when done with grass adjust
 function update(){
   var stt=new Date().getTime();
   for(var s in rooms) if(rooms[s].state=="playing") for(var l in rooms[s].playas) for(var s2 in rooms[s].playas) if(typeof rooms[s].playas[s2] === "object"){
-      var msg={x:rooms[s].playas[s2].x,y:rooms[s].playas[s2].y,angle:rooms[s].playas[s2].angle,id:rooms[s].playas[s2].id};
+      var msg={
+        x:rooms[s].playas[s2].x,
+        y:rooms[s].playas[s2].y,
+        angle:rooms[s].playas[s2].angle,
+        id:rooms[s].playas[s2].id,
+        username:rooms[s].playas[s2].username;
+      };
       try{
         rooms[s].playas[l].socket.emit("update",JSON.stringify(msg));
       }catch(e){
-        console.log(l," changed room mid-sending updates");
+        console.log(l," changed state mid-sending updates");
       }
   }
   for(var s in rooms){
@@ -434,6 +446,7 @@ function player(id,socket){//{id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,a
   console.log(rooms[pls[this.id]]);
   this.segment=rooms[pls[this.id]].track.start;
   this.cid=1;
+  this.username="Anonymous";
 }
 function Queue() {
   this.data=[];
@@ -470,6 +483,7 @@ function Queue() {
 }
 function changeRoom(socket,data,reset){
   var c= rooms[pls[socket.id]].playas[socket.id].cid;
+  var nam=rooms[pls[socket.id]].playas[socket.id].username;
   delete rooms[pls[socket.id]].playas[socket.id];//delete from 1st room
 
   var msg={};
@@ -493,6 +507,7 @@ function changeRoom(socket,data,reset){
 
   rooms[pls[socket.id]].playas[socket.id]=new player(socket.id,socket);//insert into room
   rooms[pls[socket.id]].playas[socket.id].cid=c;
+  rooms[pls[socket.id]].playas[socket.id].username=nam;
   msg={};
   for(car in rooms[pls[socket.id]].playas){//reset 2nd room
     msg[car]={
