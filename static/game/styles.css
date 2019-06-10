@@ -260,3 +260,119 @@ h1{
 p{
 	font-size: 19px;
 }
+#prevSegmentTime{
+  border-radius: 0px 25px 0px 0px;
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+}
+#thisSegmentTime{
+  border-radius: 25px 0px 0px 0px;
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
+}
+.timeBlock{
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: none;
+  border-left: none;
+  box-sizing: border-box;
+  width: 30%;
+  height: 100%;
+  float: left;
+  margin: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  vertical-align: middle;
+  transition-duration: 0.25s;
+}
+.timeBlock.large{
+  width: 35%;
+}
+.toolTip{
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.5);
+  float: left;
+  height: 100%;
+  width: 30%;
+  font-size: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: none;
+  border-top: none;
+  box-sizing: border-box;
+}
+.toolTip.large{
+  width: 35%;
+}
+#carSpeed{
+  border-left: none;
+}
+.gameStatsContainer{
+  margin: 0 auto;
+  text-align: center;
+  width: 30%;
+  height: 80%;
+  max-width: 440px;
+  min-width: 380px;
+}
+.infoGameContainer{
+  height: 20%;
+  margin: 0 auto;
+  text-align: center;
+  width: 30%;
+  max-width: 440px;
+  min-width: 380px;
+}
+.gameStatsWrapper{
+  position: absolute;
+  width: 100%;
+  height: 15%;
+  left: 0;
+  bottom: 0;
+  min-height: 110px;
+}
+.topStandingsContainer{
+  margin: 0 auto 0 0;
+  text-align: center;
+  position: relative;
+  border-radius: 0px 0px 0px 0px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-top: none;
+  border-right: none;
+  height: 10%;
+  width: 100%;
+}
+.bottomStandingsContainer{
+  position: relative;
+  border-radius: 0px 0px 0px 25px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-top: none;
+  border-right: none;
+  height: 90%;
+  width: 100%;
+}
+.gameStandingsContainer{
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 12%;
+  min-width: 150px;
+}
+#gameStandingsScreen1, #gameStandingsScreen2{
+  display: none;
+}
+.eventStand{
+  position: relative;
+  width: 100%;
+  margin: 0 0 5px 0;
+}
+#standingsList{
+  padding: 5px;
+  position: relative;
+  width: 40%;
+}
+#standingsListTimes{
+  padding: 5px;
+  position: absolute;
+  width: 40%;
+  right: 0;
+  top: 0;
+}

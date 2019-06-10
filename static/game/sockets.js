@@ -119,6 +119,8 @@ function connectSocket() {
     document.getElementById("play").style.display="block";
     document.getElementById("lapTBack").style.display="none";
     document.getElementById("lapCBack").style.display="none";
+    gameStandingsScreen1.style.display = "block";
+    gameStandingsScreen2.style.display = "block";
     data=JSON.parse(data);
     picsrc=data.track.picture[0];
     deltas=data.track.d;
@@ -133,6 +135,8 @@ function connectSocket() {
       document.getElementById("lap"+i).style.color = "#9e2822";
       document.getElementById("lap"+i).setAttribute("sl", "false");
     }
+    gameStandingsScreen1.style.display = "none";
+    gameStandingsScreen2.style.display = "none";
     queueBoard.style.display = "block";
     queueStart.innerHTML = "Queue in!";
     queueStart.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
