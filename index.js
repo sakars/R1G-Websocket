@@ -163,7 +163,7 @@ function update(){
         y:rooms[s].playas[s2].y,
         angle:rooms[s].playas[s2].angle,
         id:rooms[s].playas[s2].id,
-        username:rooms[s].playas[s2].username;
+        username:rooms[s].playas[s2].username
       };
       try{
         rooms[s].playas[l].socket.emit("update",JSON.stringify(msg));
