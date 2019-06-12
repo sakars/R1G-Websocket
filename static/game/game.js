@@ -61,6 +61,16 @@ function queue(){
   socket.emit("queue");
 }
 
+showNumberOnStart = (n) => {
+    gameStartNumber.transition = "all 0.4s";
+    gameStartNumber.innerHTML = n;
+    gameStartNumber.classList.add("sha");
+    setTimeout(function(){
+        gameStartNumber.classList.remove("sha");
+        gameStartNumber.transition = "all 0.1s";
+    }, 800);
+}
+
 changeQueueType = (cText) => {
   switch(cText){
       case "Queue in!":
