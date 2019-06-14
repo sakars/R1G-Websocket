@@ -169,7 +169,11 @@ function connectSocket() {
     for(index = 0; index < 4; index++){
       if(playerray[index] && pltimerray[index]){
         standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ". " + playerray[index];
-        standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Pending..."?"":"+")+(Math.round(pltimerray[index]*1000)/1000);
+        if (!isNaN(pltimerray[index])) {
+          standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Pending..."?"":"+")+(Math.round(pltimerray[index]*1000)/1000);
+        } else {
+          standingsListTimes.childNodes[index*2 + 1].innerHTML = pltimerray[index];
+        }
       }
     };
   });
