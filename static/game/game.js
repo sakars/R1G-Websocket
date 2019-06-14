@@ -60,7 +60,13 @@ function update(){
 function queue(){
   socket.emit("queue");
 }
-
+function timeUpdate(){
+  if(!isNaN(Number(goingTime.innerHTML))){
+    goingTime.innerHTML=(Math.round(Number(goingTime.innerHTML)*60)+1)/60;
+  }
+  setTimeout(timeUpdate,1000/60);
+}
+timeUpdate();
 showNumberOnStart = (n) => {
     gameStartNumber.transition = "all 0.4s";
     gameStartNumber.innerHTML = n;

@@ -124,6 +124,11 @@ function connectSocket() {
     document.getElementById("lapCBack").style.display="none";
     gameStandingsScreen1.style.display = "block";
     gameStandingsScreen2.style.display = "block";
+    for(var index = 0; index < 4; index++){
+      standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ".";
+      standingsListTimes.childNodes[index*2 + 1].innerHTML = "------";
+    };
+    goingTime.innerHTML="-3.000";
     data=JSON.parse(data);
     picsrc=data.track.picture[0];
     deltas=data.track.d;
@@ -147,11 +152,14 @@ function connectSocket() {
     typeVote={1:false,2:false,3:false};
   });
   socket.on("standings",function(data){
-    let playerray = ["grr", "l", "zz", "goe"];//all player usernames in order
-    let pltimerray = ["44", "56", "92", "19420"];//all player time delays in order
+    data=JSON.parse(data);
+    let playerray = data.uss;//all player usernames in order
+    let pltimerray = data.tim;//all player time delays in order
     for(index = 0; index < 4; index++){
-      standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ". " + playerray[index];
-      standingsListTimes.childNodes[index*2 + 1].innerHTML = pltimerray[index];
+      if(playerray[index] && pltimerray[index]){
+        standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ". " + playerray[index];
+        standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Pending..."?"":"+")+pltimerray[index];
+      }
     };
   });
 }
