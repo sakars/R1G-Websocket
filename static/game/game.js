@@ -62,7 +62,7 @@ function queue(){
 }
 function timeUpdate(){
   if(!isNaN(Number(goingTime.innerHTML))){
-    goingTime.innerHTML=(Math.round(Number(goingTime.innerHTML)*60)+1)/60;
+    goingTime.innerHTML = Math.round((Math.round(Number(goingTime.innerHTML)*60)+1)/60 * 1000)/1000;
   }
   setTimeout(timeUpdate,1000/60);
 }

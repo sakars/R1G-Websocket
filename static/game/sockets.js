@@ -133,6 +133,16 @@ function connectSocket() {
     picsrc=data.track.picture[0];
     deltas=data.track.d;
     ids=data.playas;
+    showNumberOnStart("3");
+    setTimeout(function () {
+        showNumberOnStart("2");
+    }, 1000);
+    setTimeout(function () {
+        showNumberOnStart("1");
+    }, 2000);
+    setTimeout(function () {
+        showNumberOnStart("Race!");
+    }, 3000);
     startGame();
   });
   socket.on("finish",function(data){
@@ -159,7 +169,7 @@ function connectSocket() {
     for(index = 0; index < 4; index++){
       if(playerray[index] && pltimerray[index]){
         standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ". " + playerray[index];
-        standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Pending..."?"":"+")+pltimerray[index];
+        standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Pending..."?"":"+")+(Math.round(pltimerray[index]*1000)/1000);
       }
     };
   });
