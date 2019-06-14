@@ -8,7 +8,6 @@ var deltas;
 var username;
 function getStartUser(){
     username = capitalizeFirstLetter(userN.value);
-    displayEndScreen();
     if(/^\w+$/.test(username)){
       loginScreen.style.display = "none";
       connectSocket();
