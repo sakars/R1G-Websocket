@@ -170,7 +170,7 @@ function connectSocket() {
       if(playerray[index] && pltimerray[index]){
         standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ". " + playerray[index];
         if (!isNaN(pltimerray[index])) {
-          standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Pending..."?"":"+")+(Math.round(pltimerray[index]*1000)/1000);
+          standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Calculating..."?"":"+")+(Math.round(pltimerray[index]*1000)/1000);
         } else {
           standingsListTimes.childNodes[index*2 + 1].innerHTML = pltimerray[index];
         }

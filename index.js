@@ -573,7 +573,7 @@ function updateStandings(room){
       let thplseg=playas[pids[ i ]].segT;
       times[i]=thplseg[thplseg.length-1].t-prplseg[thplseg.length-1].t;
       times[i]/=60;
-      if(times[i]<0)times[i]="Pending...";
+      if(times[i]<0)times[i]="Calculating...";
       pids[i-1]=playas[pids[i-1]].username;
     }
     if(i==pids.length-1){
