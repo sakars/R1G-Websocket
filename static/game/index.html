@@ -82,6 +82,73 @@
       <p>Your username will be used for online leaderboards and displayed to other players</p>
     </div>
   </div>
+  <div class = "endScreenWrapper" id = "endScreen">
+    <div class = "endScreenContainer">
+        <table class="tg">
+          <tr>
+            <th>Best Of:</th>
+            <th>Sector 1</th>
+            <th>Sector 2</th>
+            <th>Sector 3</th>
+            <th>Sector 4</th>
+            <th>Sector 5</th>
+            <th>Sector 6</th>
+            <th>Sector 7</th>
+            <th>Lap</th>
+            <th>Total Time</th>
+          </tr>
+          <tr id = "player1EndStats">
+            <td>K35</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          <tr id = "player2EndStats">
+            <td>FG866</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          <tr id = "player3EndStats">
+            <td>asf</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          <tr id = "player4EndStats">
+            <td>L12</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+        </table>
+        <button id = "returnToLobbyFromEnd" onclick = "endScreen.style.display = 'none';">Return to Lobby</button>
+    </div>
+</div>
   <div id = "gameStartNumber" class = ""></div>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/SVGBuilder.js"></script>
