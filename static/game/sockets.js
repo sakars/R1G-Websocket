@@ -123,7 +123,7 @@ function connectSocket() {
     document.getElementById("lapTBack").style.display="none";
     document.getElementById("lapCBack").style.display="none";
     gameStandingsScreen1.style.display = "block";
-    gameStandingsScreen2.style.display = "block";
+    //gameStandingsScreen2.style.display = "block";
     for(var index = 0; index < 4; index++){
       standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ".";
       standingsListTimes.childNodes[index*2 + 1].innerHTML = "------";
