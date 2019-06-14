@@ -146,6 +146,14 @@ function connectSocket() {
     queuePlayerAmount.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
     typeVote={1:false,2:false,3:false};
   });
+  socket.on("standings",function(data){
+    let playerray = ["grr", "l", "zz", "goe"];//all player usernames in order
+    let pltimerray = ["44", "56", "92", "19420"];//all player time delays in order
+    for(index = 0; index < 4; index++){
+      standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ". " + playerray[index];
+      standingsListTimes.childNodes[index*2 + 1].innerHTML = pltimerray[index];
+    };
+  });
 }
 
 function disconnectSocket() {
