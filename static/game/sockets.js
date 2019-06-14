@@ -137,7 +137,7 @@ function connectSocket() {
   });
   socket.on("finish",function(data){
     var t=["st","nd","rd","th"];
-    alert("You finished in "+data+t[Number(data)-1]+" place");
+    //alert("You finished in "+data+t[Number(data)-1]+" place");
     for(var i=1;i<=3;i++){
       document.getElementById("lap"+i).style.border = "3px solid #a51e17";
       document.getElementById("lap"+i).style.color = "#9e2822";
