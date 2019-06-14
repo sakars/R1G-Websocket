@@ -427,3 +427,6 @@ td{
 #returnToLobbyFromEnd:hover{
 	background-color: rgba(255, 255, 255, 0.4);
 }
+#endScreen{
+  display: none;
+}
