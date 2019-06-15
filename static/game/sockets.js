@@ -6,6 +6,7 @@ var ids;
 var picsrc;
 var deltas;
 var username;
+var pcount;
 function getStartUser(){
     username = capitalizeFirstLetter(userN.value);
     if(/^\w+$/.test(username)){
@@ -133,6 +134,7 @@ function connectSocket() {
     picsrc=data.track.picture[0];
     deltas=data.track.d;
     ids=data.playas;
+    pcount=data.playas.length;
     showNumberOnStart("3");
     setTimeout(function () {
         showNumberOnStart("2");
@@ -155,6 +157,7 @@ function connectSocket() {
     }
     gameStandingsScreen1.style.display = "none";
     gameStandingsScreen2.style.display = "none";
+    placeDisplay.innerHTML="You finished in "+data+t[Number(data)-1]+" place";
     displayEndScreen();
     queueBoard.style.display = "block";
     queueStart.innerHTML = "Queue in!";
@@ -166,7 +169,7 @@ function connectSocket() {
     data=JSON.parse(data);
     let playerray = data.uss;//all player usernames in order
     let pltimerray = data.tim;//all player time delays in order
-    for(index = 0; index < 4; index++){
+    for(var index = 0; index < playerray.length; index++){
       if(playerray[index] && pltimerray[index]){
         standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ". " + playerray[index];
         if (!isNaN(pltimerray[index])) {
@@ -175,13 +178,17 @@ function connectSocket() {
           standingsListTimes.childNodes[index*2 + 1].innerHTML = pltimerray[index];
         }
       }
-    };
+    }
+    for(; index < pcount; index++){
+      standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ".";
+      standingsListTimes.childNodes[index*2 + 1].innerHTML="------";
+    }
   });
 }
 
 function displayEndScreen(){
   endScreen.style.display = "block";
-  let playerray = ["grr", "l", "zz", "goe"];//all player usernames in order
+  /*let playerray = ["grr", "l", "zz", "goe"];//all player usernames in order
   let pltimerray = [
     ["44", "56", "92", "19420","44", "56", "92", "7777", "9992"],
     ["44", "56", "92", "19420","44", "56", "92", "7777", "9994"],
@@ -194,7 +201,7 @@ function displayEndScreen(){
     for(o = 0; o < 9; o++){
       cPlayerRow.childNodes[o*2 + 3].innerHTML = pltimerray[i][o];
     }
-  }
+  }*/
 }
 
 function disconnectSocket() {

@@ -459,9 +459,8 @@ function player(id,socket){//{id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,a
   this.motor=0;
   this.voted;
   this.lap=0;
-  console.log(rooms[pls[this.id]]);
   this.segment=rooms[pls[this.id]].track.start;
-  this.segT=[{seg:"__empty__",t:0}];
+  this.segT=[{seg:"___Kill_Me_Pls___",t:0}];
   this.cid=1;
   this.username="Anonymous";
 }
@@ -571,10 +570,14 @@ function updateStandings(room){
     if(i!=0){
       let prplseg=playas[pids[i-1]].segT;
       let thplseg=playas[pids[ i ]].segT;
-      times[i]=thplseg[thplseg.length-1].t-prplseg[thplseg.length-1].t;
-      times[i]/=60;
-      if(times[i]<0)times[i]="Calculating...";
-      pids[i-1]=playas[pids[i-1]].username;
+      try{
+        times[i]=thplseg[thplseg.length-1].t-prplseg[thplseg.length-1].t;
+        times[i]/=60;
+        if(times[i]<0)times[i]="Calculating...";
+        pids[i-1]=playas[pids[i-1]].username;
+      }catch(e){
+        console.log("You should hate yourself if you see this");
+      }
     }
     if(i==pids.length-1){
       pids[i]=playas[a].username;
