@@ -148,6 +148,7 @@ function connectSocket() {
     startGame();
   });
   socket.on("finish",function(data){
+    data=JSON.parse(data);
     var t=["st","nd","rd","th"];
     //alert("You finished in "+data+t[Number(data)-1]+" place");
     for(var i=1;i<=3;i++){
@@ -157,7 +158,7 @@ function connectSocket() {
     }
     gameStandingsScreen1.style.display = "none";
     gameStandingsScreen2.style.display = "none";
-    placeDisplay.innerHTML="You finished in "+data+t[Number(data)-1]+" place";
+    placeDisplay.innerHTML="You finished in "+data.place+t[Number(data.place)-1]+" place! Your time is: "+(Number(data.stateTime)/60)+" seconds";
     displayEndScreen();
     queueBoard.style.display = "block";
     queueStart.innerHTML = "Queue in!";

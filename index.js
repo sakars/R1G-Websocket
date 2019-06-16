@@ -301,7 +301,7 @@ function update(){
                   if(rooms[pls[o.id]].track.start==o.segment){
                     if(rooms[pls[o.id]].laps==o.lap){
                       if(!rooms[pls[o.id]].place)rooms[pls[o.id]].place=1;
-                      o.socket.emit("finish",rooms[pls[o.id]].place);
+                      o.socket.emit("finish",JSON.stringify({place:rooms[pls[o.id]].place,time:rooms[pls[o.id]].stateTime}));
                       rooms[pls[o.id]].place++;
                       let id=o.id;
                       if(Object.keys(rooms[pls[o.id]].playas).length==1){
