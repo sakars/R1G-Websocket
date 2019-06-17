@@ -61,7 +61,8 @@ io.on('connection', function(socket) {
     ids:Object.keys(rooms.none.playas),
     playas:msg,
     data:state.publicDataFull(),
-    track:JSON.stringify(rooms.none.track)
+    track:JSON.stringify(rooms.none.track),
+    q: queue.length()
   });
   socket.on("username",function(data) {
     rooms[pls[socket.id]].playas[socket.id].username=data;
@@ -109,11 +110,16 @@ io.on('connection', function(socket) {
     socket.emit("hardReset",JSON.stringify(msg));*/
     queue.add(socket.id);
     console.log(socket.id," joined queue, queue is:",queue);
-    socket.emit("queue");
+    for(var g in rooms.none.playas){
+      rooms.none.playas[g].socket.emit("queueUp", queue.length());
+    }
   });
   socket.on("cancelq",function(){
     queue.remove(socket.id);
     console.log(socket.id," canceled queue, queue is:",queue);
+    for(var j in rooms.none.playas){
+      rooms.none.playas[j].socket.emit("queueUp", queue.length());
+    }
   });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
@@ -360,6 +366,9 @@ function update(){
           Object.values(room.playas).forEach(function(a){
             a.socket.emit("votingTSt");
           });
+          for(var k in rooms.none.playas){
+            rooms.none.playas[k].socket.emit("queueUp", queue.length());
+          }
           room.state="votingT";
           //console.log(queue,room.playas);
         }

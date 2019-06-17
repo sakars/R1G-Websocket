@@ -39,6 +39,7 @@ function connectSocket() {
     console.log('Init:', data);
     ids=data.ids;
     players=data.playas;
+    playersInQueue.innerHTML = data.q;
     data=JSON.parse(data.track);
     picsrc=data.picture[0];
     deltas=data.d;
@@ -47,7 +48,8 @@ function connectSocket() {
   socket.on('new-connection', function(data) {
     console.log('New connection:', data);
     var t=cars.addGroup();
-    players[data.id]={groupId: t,id:data.id,object:t.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg")};
+    ids.push(data.id)
+    players[data.id]={groupId: t,id:data.id,object:t.addSVGFile({x: 0, y: 0, class:"car"}, "Images/Car_1.svg"), c: "1"};
     players[data.id].groupId.scale(0.08, 0.08);
   });
   socket.on('update', function(data) {
@@ -89,10 +91,9 @@ function connectSocket() {
   socket.on('leave', function(data) {
     console.log('Incoming leave msg:', data);
     data=JSON.parse(data);
-    delete players[data.id];
+    if(players[data.id])delete players[data.id];
     if(ids.includes(data.id))ids.splice(ids.indexOf(data.id),1);
     console.log(data.id);
-    console.log(ids);
     startGame();
   });
   socket.on("hardReset",function(data){
@@ -106,8 +107,8 @@ function connectSocket() {
     startGame();
   });
   //recievers for state updates
-  socket.on("queue",function(){
-    console.log("Queue joined.");
+  socket.on("queueUp",function(data){
+    playersInQueue.innerHTML = data;
   });
   socket.on("votingTSt",function(){
     queueBoard.style.display = "none";

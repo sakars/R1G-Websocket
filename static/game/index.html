@@ -37,7 +37,7 @@
   <div class = "queueStartWrapper" id = "queueBoard">
     <div class = "queueStartContainer">
         <button onclick = "changeQueueType(queueStart.innerHTML);" id = "queueStart">Queue in!</button>
-        <div id = "queuePlayerAmount">Players:<br>1/4</div>
+        <div onclick = "changeQueueType(queueStart.innerHTML);" id = "queuePlayerAmount">Players:<br><span id = "playersInQueue">0</span> / 4</div>
     </div>
   </div>
   <div class = "gameStandingsContainer" id = "gameStandingsScreen1">

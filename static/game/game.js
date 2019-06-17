@@ -13,12 +13,12 @@ function startGame(){
 function waiter(){
   if(fi.loaded && done){
     ids.forEach(function(a){
-    players[a].groupId = cars.addGroup()
-    players[a].id=a;
+      players[a].groupId = cars.addGroup();
+      players[a].id=a;
 
-    players[a].object = players[a].groupId.addSVGFile({class:"car"}, "Images/Car_"+players[a].c+".svg");
+      players[a].object = players[a].groupId.addSVGFile({class:"car"}, "Images/Car_"+players[a].c+".svg");
 
-    players[a].groupId.scale(0.08, 0.08);
+      players[a].groupId.scale(0.08, 0.08);
     });
     svg.insert(document.getElementById("svg-container"), true);
     update();
