@@ -57,9 +57,23 @@ function connectSocket() {
       for(s in msg) if(players[msg.id]){
         players[msg.id][s]=msg[s];
       }
+      if(lapTimeDisplay.getAttribute("upTime") == "true"){
+        if(Number(msg.lapStart) == 0){
+          lapTimeDisplay.innerHTML = "-";
+        }
+        else{
+          lapTimeDisplay.innerHTML = zeroify(Math.round(((Number(msg.stateTime) - Number(msg.lapStart))/60) * 1000)/1000);
+        }
+      }
       update();
     }
     //console.log(s);
+  });
+  socket.on('lapFinish', function(data) {
+    lapTimeDisplay.setAttribute("upTime", "false");
+    setTimeout(function (){
+      lapTimeDisplay.setAttribute("upTime", "true");
+    }, 3000);
   });
   socket.on('leave', function(data) {
     console.log('Incoming leave msg:', data);
@@ -124,7 +138,7 @@ function connectSocket() {
     document.getElementById("lapTBack").style.display="none";
     document.getElementById("lapCBack").style.display="none";
     gameStandingsScreen1.style.display = "block";
-    //gameStandingsScreen2.style.display = "block";
+    gameStandingsScreen2.style.display = "block";
     for(var index = 0; index < 4; index++){
       standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ".";
       standingsListTimes.childNodes[index*2 + 1].innerHTML = "------";
@@ -133,6 +147,7 @@ function connectSocket() {
     data=JSON.parse(data);
     picsrc=data.track.picture[0];
     deltas=data.track.d;
+    carCurrentLap.setAttribute("lapLimitStore", data.lapLim);
     ids=data.playas;
     pcount=data.playas.length;
     showNumberOnStart("3");
@@ -152,8 +167,9 @@ function connectSocket() {
     var t=["st","nd","rd","th"];
     //alert("You finished in "+data+t[Number(data)-1]+" place");
     for(var i=1;i<=3;i++){
-      document.getElementById("lap"+i).style.border = "3px solid #a51e17";
-      document.getElementById("lap"+i).style.color = "#9e2822";
+      document.getElementById("lap"+i).style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+      document.getElementById("lap"+i).style.border = "3px solid rgba(255, 255, 255, 0.4)";
+      document.getElementById("lap"+i).style.color = "white";
       document.getElementById("lap"+i).setAttribute("sl", "false");
     }
     gameStandingsScreen1.style.display = "none";
@@ -189,7 +205,7 @@ function connectSocket() {
 
 function displayEndScreen(data){
   endScreen.style.display = "block";
-  let pltimerray = ["44", "56", "92", "19420","44", "56", "92", Math.round(Number(data.topTime)/60*1000)/1000, Math.round(Number(data.time)/60*1000)/1000];//array with all player's best times of: each of the 7 sectors + best lap time + total time
+  let pltimerray = ["-", "-", "-", "-", "-", "-", "-", Math.round(Number(data.topTime)/60*1000)/1000, Math.round(Number(data.time)/60*1000)/1000];//array with all player's best times of: each of the 7 sectors + best lap time + total time
   player1EndStats.childNodes[1].innerHTML = username;
   for(o = 0; o < 9; o++){
     player1EndStats.childNodes[o*2 + 3].innerHTML = pltimerray[o];

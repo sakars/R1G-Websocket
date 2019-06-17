@@ -163,8 +163,12 @@ function update(){
         x:rooms[s].playas[s2].x,
         y:rooms[s].playas[s2].y,
         angle:rooms[s].playas[s2].angle,
+        lap:rooms[s].playas[s2].lap,
         id:rooms[s].playas[s2].id,
-        username:rooms[s].playas[s2].username
+        username:rooms[s].playas[s2].username,
+        lapStart:rooms[s].playas[s2].lapStart,
+        stateTime:rooms[s].stateTime,
+        relSpeed:rooms[s].playas[s2].relSpeed
       };
       try{
         rooms[s].playas[l].socket.emit("update",JSON.stringify(msg));
@@ -252,12 +256,12 @@ function update(){
               t++;
               //console.log(o.id+" is in the grass "+t+" times with "+(ingrass-1)+" corners.");
             }
-            o.angle+=o.wheel*mag(o.xvel,o.yvel)*60;
+            o.relSpeed = mag(o.xvel,o.yvel);
+            o.angle+=o.wheel*o.relSpeed*60;
             if(o.angle<0)o.angle+=Math.PI*2;
             if(o.angle>=Math.PI*2)o.angle-=Math.PI*2;
             o.xvel+=(Math.cos(o.angle)*o.motor)/300/ingrass;
             o.yvel+=(Math.sin(o.angle)*o.motor)/300/ingrass;
-
 
 
             var walls=rooms[pls[o.id]].track.segments[o.segment].walls;
@@ -319,13 +323,10 @@ function update(){
                     }
                     o.lap++;
                     if(o.lapStart!=0){
-                      if(!o.topTime){
-                        o.topTime=rooms[pls[o.id]].stateTime;
-                      }else{
-                        if(o.topTime>rooms[pls[o.id]].stateTime-o.lapStart){
-                          o.topTime=rooms[pls[o.id]].stateTime-o.lapStart;
-                        }
+                      if(!o.topTime || o.topTime>rooms[pls[o.id]].stateTime-o.lapStart){
+                        o.topTime=rooms[pls[o.id]].stateTime-o.lapStart;
                       }
+                      o.socket.emit("lapFinish", "");
                     }
                     o.lapStart=rooms[pls[o.id]].stateTime;
                   }
@@ -401,7 +402,7 @@ function update(){
           var arr=shuffle([0,1,2,3]);
 
           Object.values(room.playas).forEach(function(a,i){
-            a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas)}));
+            a.socket.emit("play",JSON.stringify({track:room.track,playas:Object.keys(room.playas), lapLim: room.laps}));
             a.segment=room.track.start;
             let position=room.track.start_pos[arr[i]];
             a.x=position.x + 7;
@@ -478,6 +479,7 @@ function player(id,socket){//{id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,a
   this.cid=1;
   this.username="Anonymous";
   this.lapStart=0;
+  this.recentTime=0;
   this.topTime;
 }
 function Queue() {

@@ -254,13 +254,18 @@ h1{
 p{
 	font-size: 19px;
 }
-#prevSegmentTime{
-  border-radius: 0px 25px 0px 0px;
+#prevSegmentTime, #speed{
+    border-radius: 0px 25px 0px 0px;
   border-right: 1px solid rgba(255, 255, 255, 0.4);
 }
-#thisSegmentTime{
-  border-radius: 25px 0px 0px 0px;
+#thisSegmentTime, #lapTimeDisplay{
+    border-radius: 25px 0px 0px 0px;
   border-left: 1px solid rgba(255, 255, 255, 0.4);
+}
+#lapTimeDisplay{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .timeBlock{
   position: relative;
@@ -300,20 +305,20 @@ p{
 .gameStatsContainer{
   margin: 0 auto;
   text-align: center;
-  width: 30%;
   height: 80%;
+  width: 20%;
   max-width: 440px;
-  min-width: 380px;
+  min-width: 300px;
 }
 .infoGameContainer{
   height: 20%;
   margin: 0 auto;
   text-align: center;
-  width: 30%;
+  width: 20%;
   max-width: 440px;
-  min-width: 380px;
+  min-width: 300px;
 }
-.gameStatsWrapper{
+.gameStatsWrapper, .gameStatsWrapper2{
   position: absolute;
   width: 100%;
   height: 15%;
@@ -371,62 +376,62 @@ p{
   top: 0;
 }
 #gameStartNumber{
-    position: absolute;
-    font-size: 0px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 0.5s;
+  position: absolute;
+  font-size: 0px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s;
 }
 #gameStartNumber.sha{
-    font-size: 100px;
+  font-size: 100px;
 }
 .endScreenWrapper{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  	background: #50a3a2;
-    background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
-    background: -moz-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
-    background: -o-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
-    background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+	background: #50a3a2;
+  background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  background: -moz-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  background: -o-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
 }
 .endScreenContainer{
-    width: 90%;
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    margin: 0 auto;
-    text-align: center;
+  width: 90%;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  margin: 0 auto;
+  text-align: center;
 }
 .tg{
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
 }
 .bolderTabelCell{
-    background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 th{
-    min-height: 90px;
-    min-width: 100px;
+  min-height: 90px;
+  min-width: 100px;
   box-sizing: border-box;
-    padding: 8px 0;
+  padding: 8px 0;
 }
 td{
-    min-width: 80px;
+  min-width: 80px;
   box-sizing: border-box;
-    text-align: center;
-    padding: 8px 0;
+  text-align: center;
+  padding: 8px 0;
 }
 #returnToLobbyFromEnd{
 	border: 1px solid rgba(255, 255, 255, 0.4);
 	background-color: rgba(255, 255, 255, 0.2);
 	font-size: 20px;
 	margin: 20px 0 0 0;
-    padding: 8px;
-    border-radius: 3px;
+  padding: 8px;
+  border-radius: 3px;
   transition-duration: 0.25s;
 }
 #returnToLobbyFromEnd:hover{
@@ -439,4 +444,16 @@ td{
 	font-size: 20px;
 	margin: 0 0 20px 0;
   padding: 8px;
+}
+.toolTip.xl{
+    width: 50%;
+}
+.timeBlock.xl{
+    width: 50%;
+    font-size: 33px;
+}
+.timeBlock.rounded{
+  border-radius: 25px 25px 0px 0px;
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
 }

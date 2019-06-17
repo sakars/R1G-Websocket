@@ -59,7 +59,7 @@
       </div>
     </div>
   </div>
-  <div class = "gameStatsWrapper" id = "gameStandingsScreen2">
+  <!--<div class = "gameStatsWrapper">
     <div class = "gameStatsContainer">
       <div id = "thisSegmentTime" class = "timeBlock large"><span style = "font-size: 33px;">00:13.450</span><br><span style = "font-size: 12px;">World's best:</span><br><span style = "font-size: 20px;">00:12.890</span></div>
       <div id = "speed" class = "timeBlock"><span style = "font-size: 44px;">250</span><br><span style = "font-size: 20px; border-top: 2px solid rgba(255, 255, 255, 0.4);">1 / 6</span></div>
@@ -69,6 +69,16 @@
       <div class = "toolTip large">This segment</div>
       <div id = "carSpeed" class = "toolTip">Speed/Lap</div>
       <div id = "carSpeed" class = "toolTip large">Previous segment</div>
+    </div>
+  </div>!-->
+  <div class = "gameStatsWrapper2" id = "gameStandingsScreen2">
+    <div class = "gameStatsContainer">
+        <div id = "lapTimeDisplay" class = "timeBlock xl" upTime = "true">00:00.000</div>
+        <div id = "speed" class = "timeBlock xl"><span style = "font-size: 39px;" id = "carCurrentSpeed">250</span><br><span style = "font-size: 25px; border-top: 2px solid rgba(255, 255, 255, 0.4);" id = "carCurrentLap">1 / 6</span></div>
+    </div>
+    <div class = "infoGameContainer">
+        <div class = "toolTip xl">Time of this lap</div>
+        <div class = "toolTip xl">Speed | Lap</div>
     </div>
   </div>
   <div class="wrapper" id = "loginScreen">
@@ -112,10 +122,10 @@
         </tr>
         <tr id = "worldRecordComparison">
           <td>World Record</td>
-          <td colspan = "9">Coming Soon!</td>
+          <td colspan = "8">Coming Soon!</td>
         </tr>
       </table>
-      <button id = "returnToLobbyFromEnd">Return to Lobby</button>
+      <button id = "returnToLobbyFromEnd" onclick = "endScreen.style.display = 'none';">Return to Lobby</button>
     </div>
   </div>
   <div id = "gameStartNumber" class = ""></div>
