@@ -329,7 +329,6 @@ function update(){
                     }
                     o.lap++;
                     o.lapStart=rooms[pls[o.id]].stateTime;
-                    console.log(o.lapStart);
                   }
                   o.segT.push({seg:o.segment,t:rooms[s].stateTime});
                   var stands=updateStandings(rooms[s]);
