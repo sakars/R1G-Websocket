@@ -57,17 +57,24 @@ function connectSocket() {
       for(s in msg) if(players[msg.id]){
         players[msg.id][s]=msg[s];
       }
-      if(Number(msg.lapStart) == 0){
+      if(Number(players[socket.id].lapStart) == 0){
           lapTimeDisplay.innerHTML = "-";
           goingTime.innerHTML = "-";
       }
       else{
         if(lapTimeDisplay.getAttribute("upTime") == "true"){
-          lapTimeDisplay.innerHTML = formatTime(Number(msg.stateTime) - Number(msg.lapStart));
+          lapTimeDisplay.innerHTML = formatTime(Number(players[socket.id].stateTime) - Number(players[socket.id].lapStart));
         }
       }
       if(msg.stateTime >= 0){
         goingTime.innerHTML = formatTime(msg.stateTime);
+      }
+      carCurrentLap.innerHTML = players[socket.id].lap + " / " + carCurrentLap.getAttribute("lapLimitStore");
+      if(!isNaN(players[socket.id].relSpeed)){
+        carCurrentSpeed.innerHTML = Math.round(players[socket.id].relSpeed * 750);
+      }
+      else{
+        carCurrentSpeed.innerHTML = 0;
       }
       update();
     }

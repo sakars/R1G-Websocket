@@ -49,13 +49,6 @@ function update(){
       }
       for(var k in players){
         if(players[k].object.loaded){
-          carCurrentLap.innerHTML = players[k].lap + " / " + carCurrentLap.getAttribute("lapLimitStore");
-          if(!isNaN(players[k].relSpeed)){
-            carCurrentSpeed.innerHTML = Math.round(players[k].relSpeed * 750);
-          }
-          else{
-            carCurrentSpeed.innerHTML = 0;
-          }
           if(!isNaN(players[k].x) && !isNaN(players[k].y) && !isNaN(players[socket.id].x) && !isNaN(players[socket.id].y))
           players[k].groupId.translate(window.innerWidth/2+players[k].x-players[socket.id].x-(600*0.08),window.innerHeight/2+players[k].y-players[socket.id].y-(400*0.08),false);
           if(!isNaN(players[k].angle))players[k].groupId.rotate(players[k].angle*180/Math.PI+90, (600*0.08), (400*0.08), false);

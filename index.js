@@ -166,7 +166,7 @@ function update(){
         lap:rooms[s].playas[s2].lap,
         id:rooms[s].playas[s2].id,
         username:rooms[s].playas[s2].username,
-        lapStart:rooms[s].playas[s2].lapStart,
+        lapStart:rooms[s].playas[l].lapStart,
         stateTime:rooms[s].stateTime,
         relSpeed:rooms[s].playas[s2].relSpeed
       };
@@ -303,6 +303,12 @@ function update(){
                 if(dist({x:o.x,y:o.y},{x:a.x1,y:a.y1},{x:a.x2,y:a.y2})<10){
                   //console.log("'"+o.id + "' Entered "+a.segm_name);
                   if(rooms[pls[o.id]].track.start==o.segment){
+                    if(o.lapStart!=0){
+                      if(!o.topTime || o.topTime>rooms[pls[o.id]].stateTime-o.lapStart){
+                        o.topTime=rooms[pls[o.id]].stateTime-o.lapStart;
+                      }
+                      o.socket.emit("lapFinish", "");
+                    }
                     if(rooms[pls[o.id]].laps==o.lap){
                       if(!rooms[pls[o.id]].place)rooms[pls[o.id]].place=1;
                       o.socket.emit("finish",JSON.stringify({
@@ -322,13 +328,8 @@ function update(){
                       rooms.none.playas[o.id].angle=rooms.none.track.start_pos[0].a*-Math.PI;
                     }
                     o.lap++;
-                    if(o.lapStart!=0){
-                      if(!o.topTime || o.topTime>rooms[pls[o.id]].stateTime-o.lapStart){
-                        o.topTime=rooms[pls[o.id]].stateTime-o.lapStart;
-                      }
-                      o.socket.emit("lapFinish", "");
-                    }
                     o.lapStart=rooms[pls[o.id]].stateTime;
+                    console.log(o.lapStart);
                   }
                   o.segT.push({seg:o.segment,t:rooms[s].stateTime});
                   var stands=updateStandings(rooms[s]);
