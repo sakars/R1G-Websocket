@@ -314,6 +314,14 @@ function update(){
                       rooms.none.playas[o.id].angle=rooms.none.track.start_pos[0].a*-Math.PI;
                     }
                     o.lap++;
+                    if(!o.topTime){
+                      o.topTime=rooms[pls[o.id]].stateTime;
+                    }else{
+                      if(o.topTime>rooms[pls[o.id]].stateTime-o.lapStart){
+                        o.topTime=rooms[pls[o.id]].stateTime-o.lapStart;
+                      }
+                    }
+                    o.lapStart=rooms[pls[o.id]].stateTime;
                   }
                   o.segT.push({seg:o.segment,t:rooms[s].stateTime});
                   var stands=updateStandings(rooms[s]);
@@ -463,6 +471,8 @@ function player(id,socket){//{id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,a
   this.segT=[{seg:"___Kill_Me_Pls___",t:0}];
   this.cid=1;
   this.username="Anonymous";
+  this.lapStart=0;
+  this.topTime;
 }
 function Queue() {
   this.data=[];
