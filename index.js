@@ -318,11 +318,13 @@ function update(){
                       rooms.none.playas[o.id].angle=rooms.none.track.start_pos[0].a*-Math.PI;
                     }
                     o.lap++;
-                    if(!o.topTime){
-                      o.topTime=rooms[pls[o.id]].stateTime;
-                    }else{
-                      if(o.topTime>rooms[pls[o.id]].stateTime-o.lapStart){
-                        o.topTime=rooms[pls[o.id]].stateTime-o.lapStart;
+                    if(o.lapStart!=0){
+                      if(!o.topTime){
+                        o.topTime=rooms[pls[o.id]].stateTime;
+                      }else{
+                        if(o.topTime>rooms[pls[o.id]].stateTime-o.lapStart){
+                          o.topTime=rooms[pls[o.id]].stateTime-o.lapStart;
+                        }
                       }
                     }
                     o.lapStart=rooms[pls[o.id]].stateTime;
