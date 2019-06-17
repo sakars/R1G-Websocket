@@ -435,3 +435,8 @@ td{
 #endScreen{
   display: none;
 }
+#placeDisplay{
+	font-size: 20px;
+	margin: 0 0 20px 0;
+  padding: 8px;
+}
