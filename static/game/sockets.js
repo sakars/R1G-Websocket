@@ -159,7 +159,7 @@ function connectSocket() {
     gameStandingsScreen1.style.display = "none";
     gameStandingsScreen2.style.display = "none";
     placeDisplay.innerHTML="You finished in "+data.place+t[Number(data.place)-1]+" place! Here are some of your stats:";
-    displayEndScreen();
+    displayEndScreen(data);
     queueBoard.style.display = "block";
     queueStart.innerHTML = "Queue in!";
     queueStart.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
@@ -187,22 +187,13 @@ function connectSocket() {
   });
 }
 
-function displayEndScreen(){
+function displayEndScreen(data){
   endScreen.style.display = "block";
-  /*let playerray = ["grr", "l", "zz", "goe"];//all player usernames in order
-  let pltimerray = [
-    ["44", "56", "92", "19420","44", "56", "92", "7777", "9992"],
-    ["44", "56", "92", "19420","44", "56", "92", "7777", "9994"],
-    ["44", "56", "92", "19420","44", "56", "92", "7777", "9997"],
-    ["44", "56", "92", "19420","44", "56", "92", "7777", "9999"]
-  ];//2d array with all players' best times of: each of the 7 sectors + best lap time + total time
-  for(i = 0; i < playerray.length; i++){
-    let cPlayerRow = document.getElementById("player" + (i+1) + "EndStats");
-    cPlayerRow.childNodes[1].innerHTML = playerray[i];
-    for(o = 0; o < 9; o++){
-      cPlayerRow.childNodes[o*2 + 3].innerHTML = pltimerray[i][o];
-    }
-  }*/
+  let pltimerray = ["44", "56", "92", "19420","44", "56", "92", "7777", Number(data.topTime)/60, Number(data.stateTime)/60];//2d array with all players' best times of: each of the 7 sectors + best lap time + total time
+  player1EndStats.childNodes[1].innerHTML = username;
+  for(o = 0; o < 9; o++){
+    player1EndStats.childNodes[o*2 + 3].innerHTML = pltimerray[o];
+  }
 }
 
 function disconnectSocket() {
