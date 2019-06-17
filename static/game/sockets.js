@@ -158,7 +158,7 @@ function connectSocket() {
     }
     gameStandingsScreen1.style.display = "none";
     gameStandingsScreen2.style.display = "none";
-    placeDisplay.innerHTML="You finished in "+data.place+t[Number(data.place)-1]+" place! Your time is: "+(Number(data.stateTime)/60)+" seconds";
+    placeDisplay.innerHTML="You finished in "+data.place+t[Number(data.place)-1]+" place! Here are some of your stats:";
     displayEndScreen();
     queueBoard.style.display = "block";
     queueStart.innerHTML = "Queue in!";
