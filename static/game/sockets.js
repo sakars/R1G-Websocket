@@ -189,7 +189,7 @@ function connectSocket() {
 
 function displayEndScreen(data){
   endScreen.style.display = "block";
-  let pltimerray = ["44", "56", "92", "19420","44", "56", "92", "7777", Number(data.topTime)/60, Number(data.stateTime)/60];//2d array with all players' best times of: each of the 7 sectors + best lap time + total time
+  let pltimerray = ["44", "56", "92", "19420","44", "56", "92", Math.round(Number(data.topTime)/60*1000)/1000, Math.round(Number(data.time)/60*1000)/1000];//array with all player's best times of: each of the 7 sectors + best lap time + total time
   player1EndStats.childNodes[1].innerHTML = username;
   for(o = 0; o < 9; o++){
     player1EndStats.childNodes[o*2 + 3].innerHTML = pltimerray[o];
