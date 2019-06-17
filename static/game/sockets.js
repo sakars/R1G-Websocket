@@ -57,13 +57,17 @@ function connectSocket() {
       for(s in msg) if(players[msg.id]){
         players[msg.id][s]=msg[s];
       }
-      if(lapTimeDisplay.getAttribute("upTime") == "true"){
-        if(Number(msg.lapStart) == 0){
+      if(Number(msg.lapStart) == 0){
           lapTimeDisplay.innerHTML = "-";
+          goingTime.innerHTML = "-";
+      }
+      else{
+        if(lapTimeDisplay.getAttribute("upTime") == "true"){
+          lapTimeDisplay.innerHTML = formatTime(Number(msg.stateTime) - Number(msg.lapStart));
         }
-        else{
-          lapTimeDisplay.innerHTML = zeroify(Math.round(((Number(msg.stateTime) - Number(msg.lapStart))/60) * 1000)/1000);
-        }
+      }
+      if(msg.stateTime >= 0){
+        goingTime.innerHTML = formatTime(msg.stateTime);
       }
       update();
     }
@@ -208,7 +212,9 @@ function displayEndScreen(data){
   let pltimerray = ["-", "-", "-", "-", "-", "-", "-", Math.round(Number(data.topTime)/60*1000)/1000, Math.round(Number(data.time)/60*1000)/1000];//array with all player's best times of: each of the 7 sectors + best lap time + total time
   player1EndStats.childNodes[1].innerHTML = username;
   for(o = 0; o < 9; o++){
-    player1EndStats.childNodes[o*2 + 3].innerHTML = pltimerray[o];
+    if(pltimerray[o] != "-"){
+      player1EndStats.childNodes[o*2 + 3].innerHTML = zeroify(Number(pltimerray[o]));
+    }
   }
 }
 

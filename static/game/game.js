@@ -67,13 +67,10 @@ function update(){
 function queue(){
   socket.emit("queue");
 }
-function timeUpdate(){
-  if(!isNaN(Number(goingTime.innerHTML))){
-    goingTime.innerHTML = Math.round((Math.round(Number(goingTime.innerHTML)*60)+1)/60 * 1000)/1000;
-  }
-  setTimeout(timeUpdate,1000/60);
+
+formatTime = (num) => {
+  return zeroify(Math.round(Number(num)/60 * 1000)/1000);
 }
-timeUpdate();
 
 zeroify = (data) => {
   var disp = String(data).split(".");
