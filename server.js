@@ -1,7 +1,7 @@
 var express = require('express');
 var socket = require('socket.io');
 var fs = require('fs');
-var port = 1234;
+var port = process.env.PORT || 1234;
 
 // App setuo
 var app = express();
