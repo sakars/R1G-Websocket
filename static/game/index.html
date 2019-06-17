@@ -17,7 +17,7 @@
       <button id="lap2" sl = "false" class = "vb desc largeButton" onclick = "selectVoteType(2, this)">Ride<br><span class = "smaller">10-24 laps</span></button>
       <button id="lap3" sl = "false" class = "vb desc largeButton" onclick = "selectVoteType(3, this)">Marathon<br><span class = "smaller">25-50 laps</span></button>
     </div>
-    <div class = "center"><div class = "desc voteTimer">10</div></div>
+    <div class = "center"><div class = "desc voteTimer noselect">10</div></div>
     <div class = "center bottom">
       <div class = "desc infoForVote smaller">
         You may choose multiple types. The most voted for race type is used. In case of multiple, it is chosen randomly.
@@ -26,8 +26,8 @@
   </div>
   <div id = "lapCBack">
       <div class = "center desc">Vote for lap count (<span id = "raceType" value = "1">Sprint</span>):</div><br>
-      <div class = "center"><button type="button" class = "vb desc" onclick = "lappChange(-1)">&#60;</button><div id = "lapCount" class = "desc">4</div><button type="button" class = "vb desc" onclick = "lappChange(1)">&#62;</button></div>
-      <div class = "center"><div class = "desc voteTimer">10</div></div>
+      <div class = "center"><button type="button" class = "vb desc" onclick = "lappChange(-1)">&#60;</button><div id = "lapCount" class = "desc">4</div><button type="button" class = "vb desc noselect" onclick = "lappChange(1)">&#62;</button></div>
+      <div class = "center"><div class = "desc voteTimer noselect">10</div></div>
       <div class = "center bottom">
       <div class = "desc infoForVote smaller">
         The rounded average of all votes is used for lap count. Starting positions are determined randomly.
@@ -37,7 +37,7 @@
   <div class = "queueStartWrapper" id = "queueBoard">
     <div class = "queueStartContainer">
         <button onclick = "changeQueueType(queueStart.innerHTML);" id = "queueStart">Queue in!</button>
-        <div onclick = "changeQueueType(queueStart.innerHTML);" id = "queuePlayerAmount">Players:<br><span id = "playersInQueue">0</span> / 4</div>
+        <div onclick = "changeQueueType(queueStart.innerHTML);" id = "queuePlayerAmount" class = "noselect">Players:<br><span id = "playersInQueue">0</span> / 4</div>
     </div>
   </div>
   <div class = "gameStandingsContainer" id = "gameStandingsScreen1">
@@ -128,7 +128,7 @@
       <button id = "returnToLobbyFromEnd" onclick = "endScreen.style.display = 'none';">Return to Lobby</button>
     </div>
   </div>
-  <div id = "gameStartNumber" class = ""></div>
+  <div id = "gameStartNumber" class = "noselect"></div>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/SVGBuilder.js"></script>
   <script src="sockets.js"></script>
