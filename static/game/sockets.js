@@ -60,7 +60,7 @@ function connectSocket() {
       for(s in msg) if(players[msg.id]){
         players[msg.id][s]=msg[s];
       }
-      if(Number(players[socket.id].segStart) == 0){
+      if(Number(players[socket.id].segStart) == 0 || !players[socket.id].segStart || players[socket.id].segStart == null){
         thisSegmentTimeDisplay.innerHTML = "-";
       }
       else{
