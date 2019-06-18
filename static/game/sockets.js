@@ -59,9 +59,19 @@ function connectSocket() {
       for(s in msg) if(players[msg.id]){
         players[msg.id][s]=msg[s];
       }
+      if(Number(players[socket.id].segStart) == 0){
+        console.log(Number(players[socket.id].segStart));
+        thisSegmentTimeDisplay.innerHTML = "-";
+      }
+      else{
+        console.log(Number(players[socket.id].segStart));
+        if(thisSegmentTimeDisplay.getAttribute("upTime") == "true"){
+          thisSegmentTimeDisplay.innerHTML = formatTime(Number(players[socket.id].stateTime) - Number(players[socket.id].segStart));
+        }
+      }
       if(Number(players[socket.id].lapStart) == 0){
           lapTimeDisplay.innerHTML = "-";
-          goingTime.innerHTML = "-";
+          goingTime.innerHTML = "-----";
       }
       else{
         if(lapTimeDisplay.getAttribute("upTime") == "true"){
@@ -73,7 +83,7 @@ function connectSocket() {
       }
       carCurrentLap.innerHTML = players[socket.id].lap + " / " + carCurrentLap.getAttribute("lapLimitStore");
       if(!isNaN(players[socket.id].relSpeed)){
-        carCurrentSpeed.innerHTML = Math.round(players[socket.id].relSpeed * 750);
+        carCurrentSpeed.innerHTML = Math.round(players[socket.id].relSpeed * 755);
       }
       else{
         carCurrentSpeed.innerHTML = 0;
@@ -87,6 +97,13 @@ function connectSocket() {
     setTimeout(function (){
       lapTimeDisplay.setAttribute("upTime", "true");
     }, 3000);
+  });
+  socket.on('segFinish', function(data) {
+    thisSegmentTimeDisplay.setAttribute("upTime", "false");
+    lastSegmentTimeDisplay.innerHTML = thisSegmentTimeDisplay.innerHTML;
+    setTimeout(function (){
+      thisSegmentTimeDisplay.setAttribute("upTime", "true");
+    }, 900);
   });
   socket.on('leave', function(data) {
     console.log('Incoming leave msg:', data);
@@ -153,7 +170,7 @@ function connectSocket() {
     gameStandingsScreen2.style.display = "block";
     for(var index = 0; index < 4; index++){
       standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ".";
-      standingsListTimes.childNodes[index*2 + 1].innerHTML = "------";
+      standingsListTimes.childNodes[index*2 + 1].innerHTML = "-----";
     };
     goingTime.innerHTML="-3.000";
     data=JSON.parse(data);
@@ -202,7 +219,7 @@ function connectSocket() {
       if(playerray[index] && pltimerray[index]){
         standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ". " + playerray[index];
         if (!isNaN(pltimerray[index])) {
-          standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Calculating..."?"":"+")+(Math.round(pltimerray[index]*1000)/1000);
+          standingsListTimes.childNodes[index*2 + 1].innerHTML = (index==0 || pltimerray[index]=="Calculating..."?"":"+")+(formatTime(pltimerray[index]));
         } else {
           standingsListTimes.childNodes[index*2 + 1].innerHTML = pltimerray[index];
         }
@@ -210,19 +227,20 @@ function connectSocket() {
     }
     for(; index < pcount; index++){
       standingsList.childNodes[index*2 + 1].innerHTML = (index+1) + ".";
-      standingsListTimes.childNodes[index*2 + 1].innerHTML="------";
+      standingsListTimes.childNodes[index*2 + 1].innerHTML="-----";
     }
   });
 }
 
 function displayEndScreen(data){
   endScreen.style.display = "block";
-  let pltimerray = ["-", "-", "-", "-", "-", "-", "-", Math.round(Number(data.topTime)/60*1000)/1000, Math.round(Number(data.time)/60*1000)/1000];//array with all player's best times of: each of the 7 sectors + best lap time + total time
+  let pltimerray = ["-", "-", "-", "-", "-", "-", "-", data.topTime, data.time];//array with all player's best times of: each of the 7 sectors + best lap time + total time
+  for(i = 0; i < 7; i++){
+    pltimerray[i] = data.topSegTimes[i];
+  }
   player1EndStats.childNodes[1].innerHTML = username;
   for(o = 0; o < 9; o++){
-    if(pltimerray[o] != "-"){
-      player1EndStats.childNodes[o*2 + 3].innerHTML = zeroify(Number(pltimerray[o]));
-    }
+    player1EndStats.childNodes[o*2 + 3].innerHTML = formatTime(Number(pltimerray[o]));
   }
 }
 

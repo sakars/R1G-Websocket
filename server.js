@@ -173,6 +173,7 @@ function update(){
         id:rooms[s].playas[s2].id,
         username:rooms[s].playas[s2].username,
         lapStart:rooms[s].playas[l].lapStart,
+        segStart:rooms[s].playas[l].segStart,
         stateTime:rooms[s].stateTime,
         relSpeed:rooms[s].playas[s2].relSpeed
       };
@@ -320,7 +321,8 @@ function update(){
                       o.socket.emit("finish",JSON.stringify({
                         place:rooms[pls[o.id]].place,
                         topTime:o.topTime,
-                        time:rooms[pls[o.id]].stateTime
+                        time:rooms[pls[o.id]].stateTime,
+                        topSegTimes: o.topSegTimes
                       }));
                       rooms[pls[o.id]].place++;
                       let id=o.id;
@@ -336,6 +338,16 @@ function update(){
                     o.lap++;
                     o.lapStart=rooms[pls[o.id]].stateTime;
                   }
+                  if(o.segStart != 0){
+                    if(o.topSegTimes[o.cSegId] == 0 || o.topSegTimes[o.cSegId] > rooms[pls[o.id]].stateTime - o.segStart){
+                      o.topSegTimes[o.cSegId] = rooms[pls[o.id]].stateTime - o.segStart;
+                    }
+                    o.socket.emit("segFinish", "");
+                  }
+                  o.cSegId++;
+                  if(o.cSegId == 7) o.cSegId = 0;
+                  o.segStart=rooms[pls[o.id]].stateTime;
+
                   o.segT.push({seg:o.segment,t:rooms[s].stateTime});
                   var stands=updateStandings(rooms[s]);
                   Object.values(rooms[s].playas).forEach(function(a) {
@@ -484,11 +496,14 @@ function player(id,socket){//{id:socket.id,socket:socket,x:0,y:0,xvel:0,yvel:0,a
   this.voted;
   this.lap=0;
   this.segment=rooms[pls[this.id]].track.start;
-  this.segT=[{seg:"___Kill_Me_Pls___",t:0}];
+  this.segT=[{seg:"h",t:0}];
   this.cid=1;
   this.username="Anonymous";
   this.lapStart=0;
   this.recentTime=0;
+  this.topSegTimes = [0, 0, 0, 0, 0, 0, 0];
+  this.segStart = 0;
+  this.cSegId = -1;
   this.topTime;
 }
 function Queue() {
