@@ -320,6 +320,16 @@ function update(){
                     if(o.lapStart!=0){
                       if(!o.topTime || o.topTime>rooms[pls[o.id]].stateTime-o.lapStart){
                         o.topTime=rooms[pls[o.id]].stateTime-o.lapStart;
+                        let leads = JSON.parse(fs.readFileSync('leaderboards.json', 'utf8'));
+                        let cSectorJ = leads.AtpakalMetiens.Sector_8;
+                        for(j = 0; j < cSectorJ.length; j++){
+                          if(cSectorJ[j].time == "" || Number(cSectorJ[j].time) > o.topTime){
+                            cSectorJ[j].time = String(o.topTime);
+                            cSectorJ[j].name = o.username;
+                            break;
+                          }
+                        }
+                        fs.writeFileSync('leaderboards.json', JSON.stringify(leads));
                       }
                       o.socket.emit("lapFinish", "");
                     }
@@ -331,6 +341,11 @@ function update(){
                         time:rooms[pls[o.id]].stateTime,
                         topSegTimes: o.topSegTimes
                       }));
+                      for(var h in rooms){
+                        for(var g in rooms[h].playas){
+                          rooms[h].playas[g].socket.emit("leadUpdate", JSON.parse(fs.readFileSync('leaderboards.json', 'utf8')));
+                        }
+                      }
                       rooms[pls[o.id]].place++;
                       let id=o.id;
                       if(Object.keys(rooms[pls[o.id]].playas).length==1){
@@ -348,6 +363,16 @@ function update(){
                   if(o.segStart != 0){
                     if(o.topSegTimes[o.cSegId] == 0 || o.topSegTimes[o.cSegId] > rooms[pls[o.id]].stateTime - o.segStart){
                       o.topSegTimes[o.cSegId] = rooms[pls[o.id]].stateTime - o.segStart;
+                      let leads = JSON.parse(fs.readFileSync('leaderboards.json', 'utf8'));
+                      let cSectorJ = leads.AtpakalMetiens["Sector_" + (o.cSegId+1)];
+                      for(var j = 0; j < cSectorJ.length; j++){
+                        if(cSectorJ[j].time == "" || Number(cSectorJ[j].time) > o.topSegTimes[o.cSegId]){
+                          cSectorJ[j].time = String(rooms[pls[o.id]].stateTime - o.segStart);
+                          cSectorJ[j].name = o.username;
+                          break;
+                        }
+                      }
+                      fs.writeFileSync('leaderboards.json', JSON.stringify(leads));
                     }
                     o.socket.emit("segFinish", "");
                   }
@@ -604,6 +629,7 @@ function shuffle(array) {
 
   return array;
 }
+
 function updateStandings(room){
   let playas=room.playas;
   let pids=Object.keys(room.playas);

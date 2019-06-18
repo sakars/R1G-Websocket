@@ -36,6 +36,7 @@ function connectSocket() {
   // Listen for events
   socket.on('init', function(data) {
     queueBoard.style.display = "block";
+    leaderboardsThing.style.display = "block";
     console.log('Init:', data);
     ids=data.ids;
     players=data.playas;
@@ -127,6 +128,7 @@ function connectSocket() {
   });
   socket.on("votingTSt",function(){
     queueBoard.style.display = "none";
+    leaderboardsThing.style.display = "none";
     document.getElementById("play").style.display="none";
     document.getElementById("lapTBack").style.display="block";
     document.getElementById("lapCBack").style.display="none";
@@ -204,6 +206,7 @@ function connectSocket() {
     placeDisplay.innerHTML="You finished in "+data.place+t[Number(data.place)-1]+" place! Here are some of your stats:";
     displayEndScreen(data);
     queueBoard.style.display = "block";
+    leaderboardsThing.style.display = "block";
     queueStart.innerHTML = "Queue in!";
     queueStart.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
     queuePlayerAmount.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
@@ -230,6 +233,16 @@ function connectSocket() {
   });
   socket.on("refresh",function() {
     location.reload();
+  });
+  socket.on("leadUpdate",function(data) {
+    for(k = 0; k < 8; k++){
+      let cTabl = document.getElementById("s" + (k+1) + "leadTable").children[0].children;
+      for(z = 1; z < 4; z++){
+        let cRow = cTabl[z].children;
+        cRow[0].innerHTML = z + ". " + data.AtpakalMetiens["Sector_" + (k + 1)][z - 1].name;
+        cRow[1].innerHTML = formatTime(data.AtpakalMetiens["Sector_" + (k + 1)][z - 1].time);
+      }
+    }
   });
 }
 
