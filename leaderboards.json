@@ -1,0 +1,37 @@
+{
+  "AtpakalMetiens":
+  {
+    "Sector_1":{
+      "name": "",
+      "time": ""
+    },
+    "Sector_2":{
+      "name": "",
+      "time": ""
+    },
+    "Sector_3":{
+      "name": "",
+      "time": ""
+    },
+    "Sector_4":{
+      "name": "",
+      "time": ""
+    },
+    "Sector_5":{
+      "name": "",
+      "time": ""
+    },
+    "Sector_6":{
+      "name": "",
+      "time": ""
+    },
+    "Sector_7":{
+      "name": "",
+      "time": ""
+    },
+    "Lap":{
+      "name": "",
+      "time": ""
+    }
+  }
+}
