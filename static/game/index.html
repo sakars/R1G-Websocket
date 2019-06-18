@@ -64,9 +64,9 @@
         <div id = "lapTimeDisplay" class = "timeBlock rounded xl" upTime = "true">00:13.450</div>
     </div>
     <div class = "gameStatsContainer">
-        <div id = "thisSegmentTime" class = "timeBlock large"><span style = "font-size: 33px;" id = "thisSegmentTimeDisplay" upTime = "true">-</span><br><span style = "font-size: 12px;">World's best:</span><br><span style = "font-size: 20px;">-----</span></div>
+        <div id = "thisSegmentTime" class = "timeBlock large"><span style = "font-size: 33px;" id = "thisSegmentTimeDisplay" upTime = "true">-</span><br><span style = "font-size: 12px;">World's best:</span><br><span style = "font-size: 20px;" id = "thisSegmentWorldDisplay">-----</span></div>
         <div id = "speedd" class = "timeBlock lText"><span style = "font-size: 39px;" id = "carCurrentSpeed">250</span><br><span style = "font-size: 25px; border-top: 2px solid rgba(255, 255, 255, 0.4);" id = "carCurrentLap">1 / 6</span></div>
-        <div id = "prevSegmentTime" class = "timeBlock large"><span style = "font-size: 33px;" id = "lastSegmentTimeDisplay">-</span><br><span style = "font-size: 12px;">World's best:</span><br><span style = "font-size: 20px;">-----</span></div>
+        <div id = "prevSegmentTime" class = "timeBlock large"><span style = "font-size: 33px;" id = "lastSegmentTimeDisplay">-</span><br><span style = "font-size: 12px;">World's best:</span><br><span style = "font-size: 20px;" id = "lastSegmentWorldDisplay">-----</span></div>
     </div>
     <div class = "infoGameContainer">
         <div class = "toolTip large">This segment</div>
@@ -255,7 +255,15 @@
         </tr>
         <tr id = "worldRecordComparison">
           <td>World Record</td>
-          <td colspan = "8">Coming Soon!</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
         </tr>
       </table>
       <button id = "returnToLobbyFromEnd" onclick = "endScreen.style.display = 'none';">Return to Lobby</button>

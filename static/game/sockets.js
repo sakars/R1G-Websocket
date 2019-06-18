@@ -66,6 +66,9 @@ function connectSocket() {
       else{
         if(thisSegmentTimeDisplay.getAttribute("upTime") == "true"){
           thisSegmentTimeDisplay.innerHTML = formatTime(Number(players[socket.id].stateTime) - Number(players[socket.id].segStart));
+          let cTabl = document.getElementById("s" + (players[socket.id].cSegId + 1) + "leadTable").children[0].children;
+          let cRow = cTabl[1].children;
+          thisSegmentWorldDisplay.innerHTML = cRow[1].innerHTML;
         }
       }
       if(Number(players[socket.id].lapStart) == 0){
@@ -100,6 +103,7 @@ function connectSocket() {
   socket.on('segFinish', function(data) {
     thisSegmentTimeDisplay.setAttribute("upTime", "false");
     lastSegmentTimeDisplay.innerHTML = thisSegmentTimeDisplay.innerHTML;
+    lastSegmentWorldDisplay.innerHTML = thisSegmentWorldDisplay.innerHTML;
     setTimeout(function (){
       thisSegmentTimeDisplay.setAttribute("upTime", "true");
     }, 900);
@@ -255,6 +259,12 @@ function displayEndScreen(data){
   player1EndStats.childNodes[1].innerHTML = username;
   for(o = 0; o < 9; o++){
     player1EndStats.childNodes[o*2 + 3].innerHTML = formatTime(Number(pltimerray[o]));
+  }
+  for(k = 0; k < 8; k++){
+    let cTabl = document.getElementById("s" + (k+1) + "leadTable").children[0].children;
+    let cRow = cTabl[1].children;
+    let us = cRow[0].innerHTML.split(". ")[1];
+    worldRecordComparison.children[k + 1].innerHTML = cRow[1].innerHTML + " (" + us + ")";
   }
 }
 

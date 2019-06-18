@@ -182,6 +182,7 @@ function update(){
         username:rooms[s].playas[s2].username,
         lapStart:rooms[s].playas[l].lapStart,
         segStart:rooms[s].playas[l].segStart,
+        cSegId:rooms[s].playas[l].cSegId,
         stateTime:rooms[s].stateTime,
         relSpeed:rooms[s].playas[s2].relSpeed
       };
@@ -325,12 +326,8 @@ function update(){
                         let cSectorJ = leads.AtpakalMetiens.Sector_8;
                         for(j = 0; j < cSectorJ.length; j++){
                           if(cSectorJ[j].time == "" || Number(cSectorJ[j].time) > o.topTime){
-                            if(j != 2){
-                              cSectorJ[j + 1].time = cSectorJ[j].time;
-                              cSectorJ[j + 1].name = cSectorJ[j].name;
-                            }
-                            cSectorJ[j].time = String(o.topTime);
-                            cSectorJ[j].name = o.username;
+                            cSectorJ.splice(j, 0, {time: String(o.topTime), name: o.username});
+                            cSectorJ.pop();
                             break;
                           }
                         }
@@ -340,17 +337,17 @@ function update(){
                     }
                     if(rooms[pls[o.id]].laps==o.lap){
                       if(!rooms[pls[o.id]].place)rooms[pls[o.id]].place=1;
+                      for(var h in rooms){
+                        for(var g in rooms[h].playas){
+                          rooms[h].playas[g].socket.emit("leadUpdate", JSON.parse(fs.readFileSync('leaderboards.json', 'utf8')));
+                        }
+                      }
                       o.socket.emit("finish",JSON.stringify({
                         place:rooms[pls[o.id]].place,
                         topTime:o.topTime,
                         time:rooms[pls[o.id]].stateTime,
                         topSegTimes: o.topSegTimes
                       }));
-                      for(var h in rooms){
-                        for(var g in rooms[h].playas){
-                          rooms[h].playas[g].socket.emit("leadUpdate", JSON.parse(fs.readFileSync('leaderboards.json', 'utf8')));
-                        }
-                      }
                       rooms[pls[o.id]].place++;
                       let id=o.id;
                       if(Object.keys(rooms[pls[o.id]].playas).length==1){
@@ -371,13 +368,10 @@ function update(){
                       let leads = JSON.parse(fs.readFileSync('leaderboards.json', 'utf8'));
                       let cSectorJ = leads.AtpakalMetiens["Sector_" + (o.cSegId+1)];
                       for(var j = 0; j < cSectorJ.length; j++){
+                        console.log(cSectorJ[j].time, "   ", o.topSegTimes[o.cSegId], "   ", cSectorJ, "   ");
                         if(cSectorJ[j].time == "" || Number(cSectorJ[j].time) > o.topSegTimes[o.cSegId]){
-                          if(j != 2){
-                            cSectorJ[j + 1].time = cSectorJ[j].time;
-                            cSectorJ[j + 1].name = cSectorJ[j].name;
-                          }
-                          cSectorJ[j].time = String(rooms[pls[o.id]].stateTime - o.segStart);
-                          cSectorJ[j].name = o.username;
+                          cSectorJ.splice(j, 0, {time: String(o.topSegTimes[o.cSegId]), name: o.username});
+                          cSectorJ.pop();
                           break;
                         }
                       }
