@@ -64,7 +64,7 @@ function connectSocket() {
         thisSegmentTimeDisplay.innerHTML = "-";
       }
       else{
-        if(thisSegmentTimeDisplay.getAttribute("upTime") == "true"){
+        if(thisSegmentTimeDisplay.getAttribute("upTime") == "true" && players[socket.id].cSegId != -1){
           thisSegmentTimeDisplay.innerHTML = formatTime(Number(players[socket.id].stateTime) - Number(players[socket.id].segStart));
           let cTabl = document.getElementById("s" + (players[socket.id].cSegId + 1) + "leadTable").children[0].children;
           let cRow = cTabl[1].children;
