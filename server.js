@@ -637,7 +637,7 @@ function updateStandings(room){
 setInterval(function() {
   Object.keys(timeout).forEach(function(a) {
     if(timeout[a]){
-      rooms[pls[a]].playas[a].socket.disconnect();
+      rooms[pls[a]].playas[a].socket.emit("refresh");
     }else{
       timeout[a]=true;
     }

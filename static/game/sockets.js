@@ -230,6 +230,9 @@ function connectSocket() {
       standingsListTimes.childNodes[index*2 + 1].innerHTML="-----";
     }
   });
+  socket.on("refresh",function() {
+    location.reload();
+  });
 }
 
 function displayEndScreen(data){
