@@ -325,6 +325,10 @@ function update(){
                         let cSectorJ = leads.AtpakalMetiens.Sector_8;
                         for(j = 0; j < cSectorJ.length; j++){
                           if(cSectorJ[j].time == "" || Number(cSectorJ[j].time) > o.topTime){
+                            if(j != 2){
+                              cSectorJ[j + 1].time = cSectorJ[j].time;
+                              cSectorJ[j + 1].name = cSectorJ[j].name;
+                            }
                             cSectorJ[j].time = String(o.topTime);
                             cSectorJ[j].name = o.username;
                             break;
