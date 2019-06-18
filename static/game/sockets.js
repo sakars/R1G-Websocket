@@ -60,11 +60,9 @@ function connectSocket() {
         players[msg.id][s]=msg[s];
       }
       if(Number(players[socket.id].segStart) == 0){
-        console.log(Number(players[socket.id].segStart));
         thisSegmentTimeDisplay.innerHTML = "-";
       }
       else{
-        console.log(Number(players[socket.id].segStart));
         if(thisSegmentTimeDisplay.getAttribute("upTime") == "true"){
           thisSegmentTimeDisplay.innerHTML = formatTime(Number(players[socket.id].stateTime) - Number(players[socket.id].segStart));
         }
