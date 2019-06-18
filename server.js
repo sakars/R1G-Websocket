@@ -368,6 +368,10 @@ function update(){
                       let cSectorJ = leads.AtpakalMetiens["Sector_" + (o.cSegId+1)];
                       for(var j = 0; j < cSectorJ.length; j++){
                         if(cSectorJ[j].time == "" || Number(cSectorJ[j].time) > o.topSegTimes[o.cSegId]){
+                          if(j != 2){
+                            cSectorJ[j + 1].time = cSectorJ[j].time;
+                            cSectorJ[j + 1].name = cSectorJ[j].name;
+                          }
                           cSectorJ[j].time = String(rooms[pls[o.id]].stateTime - o.segStart);
                           cSectorJ[j].name = o.username;
                           break;
