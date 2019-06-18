@@ -397,7 +397,7 @@ function update(){
       case "waiting":
         var room=rooms[s];
         if(queue.length()>=4 || (Object.values(rooms.none.playas).length==queue.length() && queue.length()>0)){//enough players?
-          room.stateTime=5*60;//set voting time
+          room.stateTime=15*60;//set voting time
           let l=queue.length();
           var carr=shuffle([1,2,3,4]);
           console.log(carr);
@@ -420,7 +420,7 @@ function update(){
       case "votingT":
         var room=rooms[s];
         if(room.stateTime==0){
-          room.stateTime=5*60;
+          room.stateTime=15*60;
           var names={"1":"Sprint","2":"Ride","3":"Marathon"};
           var rideinfo={"1":{min:3,max:10,step:1,start:6},"2":{min:10,max:24,step:2,start:16},"3":{min:25,max:50,step:5,start:35}};
           var k={"1":0,"2":0,"3":0};
