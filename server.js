@@ -65,6 +65,7 @@ io.on('connection', function(socket) {
     track:JSON.stringify(rooms.none.track),
     q: queue.length()
   });
+  socket.emit("leadUpdate", JSON.parse(fs.readFileSync('leaderboards.json', 'utf8')));
   socket.on("username",function(data) {
     rooms[pls[socket.id]].playas[socket.id].username=data;
     console.log(rooms[pls[socket.id]].playas[socket.id].username);
