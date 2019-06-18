@@ -19,6 +19,7 @@ var rooms={
   room3:{playas:{},track:tracks["AtpakalMetiens"],state:"waiting",stateTime:0,cap:4}
 }
 var pls={};
+var timeout={};//variable for throwing ppl away
 // Static files
 app.use(express.static('static'));
 
@@ -27,7 +28,7 @@ var io = socket(server);
 io.on('connection', function(socket) {
   console.log('Connection established, id=', socket.id);
   console.log('Connection data', socket.handshake.query);
-
+  timeout[socket.id]=true;
   var initData = socket.handshake.query.initData ? JSON.parse(socket.handshake.query.initData) : null;
   state.clientJoin(socket.id, initData);
 
@@ -81,12 +82,15 @@ io.on('connection', function(socket) {
     }catch(e){
       console.log("player ",socket.id," was moved mid-update");
     }
+    timeout[socket.id]=false;
   });
   socket.on("voteType",function(data){
     rooms[pls[socket.id]].playas[socket.id].voted=JSON.parse(data);
+    timeout[socket.id]=false;
   });
   socket.on("voteLap",function(data){
     rooms[pls[socket.id]].playas[socket.id].voted=data;
+    timeout[socket.id]=false;
   });
   socket.on("queue",function(){
     /*console.log(socket.id+" Changed room from "+pls[socket.id]+" to ",data);
@@ -113,6 +117,7 @@ io.on('connection', function(socket) {
     for(var g in rooms.none.playas){
       rooms.none.playas[g].socket.emit("queueUp", queue.length());
     }
+    timeout[socket.id]=false;
   });
   socket.on("cancelq",function(){
     queue.remove(socket.id);
@@ -120,6 +125,7 @@ io.on('connection', function(socket) {
     for(var j in rooms.none.playas){
       rooms.none.playas[j].socket.emit("queueUp", queue.length());
     }
+    timeout[socket.id]=false;
   });
   socket.on('disconnect', function(reason) {
     console.log('Disconnect from', socket.id, '; reason =', reason);
@@ -127,6 +133,7 @@ io.on('connection', function(socket) {
     socket.broadcast.emit('leave',JSON.stringify( {id: socket.id} )); // Send to every open socket, excluding the sender
     delete rooms[pls[socket.id]].playas[socket.id];
     queue.remove(socket.id);
+    delete timeout[socket.id];
   });
 });
 
@@ -612,3 +619,12 @@ function updateStandings(room){
   });
   return {uss:pids,tim:times};
 }
+setInterval(function() {
+  Object.keys(timeout).forEach(function(a) {
+    if(timeout[a]){
+      rooms[pls[a]].playas[a].socket.disconnect();
+    }else{
+      timeout[a]=true;
+    }
+  });
+}, 300000);
